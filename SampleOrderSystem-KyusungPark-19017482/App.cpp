@@ -79,12 +79,11 @@ void App::run() {
     }
 }
 
-// ── Samsung 레터마크 타원 로고 + 현재시간 헤더 ──────────
+// ── Samsung 레터마크 + 현재시간 헤더 ─────────────────────
 void App::printHeader() const {
     string t = getCurrentTime();
 
-    // SAMSUNG 블록 레터마크 — 5행 × 41열
-    // 각 글자: S A M S U N G (5×5, 글자 간 1칸)
+    // SAMSUNG 블록 레터마크 — Samsung Blue RGB(20,40,160) #1428A0
     const char* L[5] = {
         " ███   ██   █   █  ███  █   █ █   █  ████",
         "█     █  █  ██ ██ █     █   █ ██  █ █    ",
@@ -94,23 +93,8 @@ void App::printHeader() const {
     };
 
     cout << "\n";
-
-    // 타원 상단 곡선
-    cout << CB << BOLD << "    .──────────────────────────────────────────────." << CR << "\n";
-    cout << CB << BOLD << "  ,'                                                  `." << CR << "\n";
-    cout << CB << BOLD << " /                                                      \\" << CR << "\n";
-
-    // SAMSUNG 레터마크 5행
-    for (int i = 0; i < 5; i++) {
-        cout << CB << BOLD << "|  " << CR;
-        cout << CW << BOLD << L[i] << CR;
-        cout << CB << BOLD << "  |" << CR << "\n";
-    }
-
-    // 타원 하단 곡선
-    cout << CB << BOLD << " \\                                                      /" << CR << "\n";
-    cout << CB << BOLD << "  `.                                                  .'" << CR << "\n";
-    cout << CB << BOLD << "    `──────────────────────────────────────────────'" << CR << "\n";
+    for (int i = 0; i < 5; i++)
+        cout << "  " << CB << BOLD << L[i] << CR << "\n";
 
     cout << "\n";
     cout << "       " << CW << BOLD << "반도체 시료 생산주문관리 시스템" << CR << "\n";
