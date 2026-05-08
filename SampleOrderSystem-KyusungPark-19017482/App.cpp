@@ -72,58 +72,33 @@ void App::run() {
     }
 }
 
-// ── Samsung 로고 + 현재시간 헤더 ──────────────────────────
+// ── Samsung 타원 로고 + 현재시간 헤더 ────────────────────
 void App::printHeader() const {
     string t = getCurrentTime();
 
-    // 외곽 프레임
-    cout << CB << BOLD;
-    cout << "╔═══════════════════════════════════════════════════════════╗\n";
-    cout << "║                                                           ║\n";
-    cout << CR;
+    cout << "\n";
 
-    // Samsung 로고 박스
-    cout << CB << BOLD << "║  " << CR;
-    cout << CB << BOLD << "╔═════════════════════════════════════════════════════╗" << CR;
-    cout << CB << BOLD << "  ║\n" << CR;
+    // Samsung 타원형 로고
+    cout << CB << BOLD << "       .──────────────────────────────────────────────────." << CR << "\n";
+    cout << CB << BOLD << "     ,'                                                    `." << CR << "\n";
+    cout << CB << BOLD << "    /                                                        \\" << CR << "\n";
+    cout << CB << BOLD << "   /                                                          \\" << CR << "\n";
+    cout << CB << BOLD << "  |   " << CR;
+    cout << CW << BOLD  << "S  ·  A  ·  M  ·  S  ·  U  ·  N  ·  G" << CR;
+    cout << "   ";
+    cout << CB << BOLD  << "Electronics" << CR;
+    cout << "   ";
+    cout << CB << BOLD << "|" << CR << "\n";
+    cout << CB << BOLD << "   \\                                                          /" << CR << "\n";
+    cout << CB << BOLD << "    \\                                                        /" << CR << "\n";
+    cout << CB << BOLD << "     `.                                                    .'" << CR << "\n";
+    cout << CB << BOLD << "       `──────────────────────────────────────────────────'" << CR << "\n";
 
-    cout << CB << BOLD << "║  ║" << CR;
-    cout << "                                                     ";
-    cout << CB << BOLD << "║  ║\n" << CR;
-
-    cout << CB << BOLD << "║  ║  " << CR;
-    cout << CB << BOLD << "S · A · M · S · U · N · G" << CR;
-    cout << CW << BOLD << "   Electronics          " << CR;
-    cout << CB << BOLD << "║  ║\n" << CR;
-
-    cout << CB << BOLD << "║  ║" << CR;
-    cout << "                                                     ";
-    cout << CB << BOLD << "║  ║\n" << CR;
-
-    cout << CB << BOLD << "║  " << CR;
-    cout << CB << BOLD << "╚═════════════════════════════════════════════════════╝" << CR;
-    cout << CB << BOLD << "  ║\n" << CR;
-
-    // 시스템 이름
-    cout << CB << BOLD << "║" << CR;
-    cout << "         " << CW << BOLD << "반도체 시료 생산주문관리 시스템" << CR;
-    cout << "                      ";
-    cout << CB << BOLD << "║\n" << CR;
-
-    // 현재 시간
-    cout << CB << BOLD << "║" << CR;
-    cout << "                                                           ";
-    cout << CB << BOLD << "║\n" << CR;
-
-    cout << CB << BOLD << "║  " << CR;
-    cout << CY << BOLD << "⏱  현재시각 :  " << t << "  (KST)" << CR;
-    cout << "                 ";
-    cout << CB << BOLD << "║\n" << CR;
-
-    // 하단 프레임
-    cout << CB << BOLD;
-    cout << "╚═══════════════════════════════════════════════════════════╝\n";
-    cout << CR;
+    cout << "\n";
+    cout << "        " << CW << BOLD << "반도체 시료 생산주문관리 시스템" << CR << "\n";
+    cout << "\n";
+    cout << "  " << CY << BOLD << "⏱  현재시각 :  " << t << "  (KST)" << CR << "\n";
+    cout << CGR << "─────────────────────────────────────────────────────────────" << CR << "\n";
 }
 
 // ── 요약 정보 ─────────────────────────────────────────────
