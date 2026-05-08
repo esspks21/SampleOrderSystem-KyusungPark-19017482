@@ -1,5 +1,8 @@
 docs/PLAN.md
 
+# 누적 데이터 — 로컬 전용, Git 반영 금지
+Database/
+
 # Visual Studio
 .vs/
 *.user

@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <conio.h>      // _getch() — 비밀번호 입력 마스킹 (Windows)
 using namespace std;
 
 // ── ANSI 색상 코드 ─────────────────────────────────────────
@@ -39,9 +40,9 @@ App::App()
     : orderManager_(productManager_),
       productionLine_(orderManager_),
       monitor_(productManager_, orderManager_),
-      fileRepository_(productManager_, orderManager_, productionLine_)
+      jsonRepository_(productManager_, orderManager_, productionLine_)
 {
-    fileRepository_.load();
+    jsonRepository_.load();  // Database/*.json 에서 누적 데이터 복원
 }
 
 // ── 메인 루프 ─────────────────────────────────────────────
@@ -61,8 +62,9 @@ void App::run() {
         case 3: runMonitorMenu();    break;
         case 4: runReleaseMenu();    break;
         case 5: runProductionMenu(); break;
+        case 9: runResetMenu();      break;
         case 0:
-            fileRepository_.save();
+            jsonRepository_.save();
             cout << CG << "저장 완료. 시스템을 종료합니다." << CR << "\n";
             return;
         default:
@@ -79,7 +81,7 @@ void App::printHeader() const {
     // SAMSUNG 블록 레터마크 — 5행 × 41열
     // 각 글자: S A M S U N G (5×5, 글자 간 1칸)
     const char* L[5] = {
-        " ███   ██  █   █  ███  █   █ █   █  ████",
+        " ███   ██   █   █  ███  █   █ █   █  ████",
         "█     █  █  ██ ██ █     █   █ ██  █ █    ",
         " ███  ████  █ █ █  ███  █   █ █ █ █ █  ██",
         "    █ █  █  █   █     █ █   █ █  ██ █   █",
@@ -136,6 +138,7 @@ void App::printMainMenu() const {
     cout << "  " << CC << BOLD << "3." << CR << "  모니터링\n";
     cout << "  " << CC << BOLD << "4." << CR << "  출고 처리\n";
     cout << "  " << CC << BOLD << "5." << CR << "  생산 라인\n";
+    cout << "  " << CRD << "9." << CR << "  데이터 초기화  (관리자)\n";
     cout << "  " << CGR << "0." << CR << "  종료\n";
     cout << "\n";
 }
@@ -305,4 +308,54 @@ string App::readLine(const string& prompt) {
     string line;
     getline(cin, line);
     return line;
+}
+
+// ── 비밀번호 입력 — 키 입력을 * 로 마스킹 ──────────────────
+string App::readPassword(const string& prompt) {
+    cout << prompt;
+    string pw;
+    int ch;
+    while ((ch = _getch()) != '\r' && ch != '\n') {
+        if (ch == '\b') {           // 백스페이스
+            if (!pw.empty()) {
+                cout << "\b \b";
+                pw.pop_back();
+            }
+        } else if (ch >= 32 && ch < 127) {
+            cout << '*';
+            pw += static_cast<char>(ch);
+        }
+    }
+    cout << "\n";
+    return pw;
+}
+
+// ── 데이터 초기화 (관리자 전용) ───────────────────────────
+void App::runResetMenu() {
+    clearScreen();
+    cout << CRD << BOLD << "⚠  누적 데이터 초기화  ⚠" << CR << "\n\n";
+    cout << "  시료 · 주문 · 생산 이력이 모두 영구 삭제됩니다.\n";
+    cout << "  이 작업은 되돌릴 수 없습니다.\n\n";
+    cout << CY << "  🔑 비밀번호 힌트 :  " << CR
+         << PasswordGuard::hint() << "\n\n";
+
+    string pw = readPassword("  비밀번호 입력 : ");
+
+    if (!PasswordGuard::verify(pw)) {
+        cout << "\n" << CRD << "  ✗ 비밀번호가 틀렸습니다." << CR << "\n";
+        readLine("");
+        return;
+    }
+
+    cout << "\n" << CY << "  정말로 초기화하시겠습니까? (y/N) : " << CR;
+    string confirm = readLine("");
+    if (confirm != "y" && confirm != "Y") {
+        cout << CGR << "  취소되었습니다." << CR << "\n";
+        readLine("");
+        return;
+    }
+
+    jsonRepository_.clearAll();
+    cout << "\n" << CG << BOLD << "  ✓ 모든 데이터가 초기화되었습니다." << CR << "\n";
+    readLine("");
 }
