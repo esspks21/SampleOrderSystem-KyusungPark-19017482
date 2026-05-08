@@ -1,6 +1,6 @@
 # SampleOrderSystem-KyusungPark-19017482
 
-@PLAN.md
+@docs/PLAN.md
 @docs/PRD.md
 
 ## 프로젝트 개요

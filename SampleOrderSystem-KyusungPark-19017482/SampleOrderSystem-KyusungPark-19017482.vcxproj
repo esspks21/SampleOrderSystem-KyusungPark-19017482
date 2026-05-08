@@ -155,7 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CLAUDE.md" />
-    <None Include="..\PLAN.md" />
+    <None Include="..\docs\PLAN.md" />
     <None Include="..\docs\PRD.md" />
     <None Include="..\docs\PRD_메인메뉴.md" />
     <None Include="..\docs\PRD_시료관리.md" />
