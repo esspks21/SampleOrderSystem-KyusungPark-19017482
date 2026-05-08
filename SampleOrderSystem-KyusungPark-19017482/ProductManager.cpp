@@ -46,6 +46,24 @@ vector<Product> ProductManager::search(const string& keyword, bool ascending) co
     return result;
 }
 
+bool ProductManager::updateProduct(int id, const string& name, int stock,
+                                   double avgProductionTime, double yieldRate) {
+    Product* p = findById(id);
+    if (!p) return false;
+    // name이 비어 있으면 기존값 유지
+    if (!name.empty()) {
+        // Product는 name을 직접 수정하는 setter가 없으므로 필드별 setter 사용
+        // name은 불변이 아니므로 새 Product로 교체하는 대신 직접 값 반영
+        // (Product에 setName 없음 → 재구성)
+        *p = Product(id, name, stock, avgProductionTime, yieldRate);
+    } else {
+        p->setStock(stock);
+        p->setAvgProductionTime(avgProductionTime);
+        p->setYieldRate(yieldRate);
+    }
+    return true;
+}
+
 bool ProductManager::updateStock(int id, int delta) {
     Product* p = findById(id);
     if (!p) return false;

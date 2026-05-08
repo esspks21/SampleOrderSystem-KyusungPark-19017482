@@ -11,6 +11,8 @@ public:
     void listProducts(bool ascending = true) const;
     vector<Product> search(const string& keyword, bool ascending = true) const;
     bool updateStock(int id, int delta);
+    bool updateProduct(int id, const string& name, int stock,
+                       double avgProductionTime, double yieldRate);
     Product* findById(int id);
     const Product* findById(int id) const;
     const vector<Product>& getAll() const;

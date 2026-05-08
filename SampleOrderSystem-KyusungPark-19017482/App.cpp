@@ -156,6 +156,7 @@ void App::runProductMenu() {
         cout << "  " << CC << "1." << CR << " 시료 등록\n";
         cout << "  " << CC << "2." << CR << " 목록 조회\n";
         cout << "  " << CC << "3." << CR << " 이름 검색\n";
+        cout << "  " << CC << "4." << CR << " 시료 수정\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
@@ -189,6 +190,50 @@ void App::runProductMenu() {
             auto res = productManager_.search(kw, true);
             if (res.empty()) cout << CRD << "  검색 결과 없음." << CR << "\n";
             else for (const auto& p : res) cout << "  " << p.toString() << "\n";
+        } else if (c == 4) {
+            productManager_.listProducts(true);
+            int id = readInt("수정할 시료 ID: ");
+            if (id == BACK) { readLine(""); continue; }
+            const Product* target = productManager_.findById(id);
+            if (!target) {
+                cout << CRD << "  해당 ID의 시료가 없습니다." << CR << "\n";
+            } else {
+                cout << "  현재 정보: " << target->toString() << "\n";
+                cout << CGR << "  (Enter만 누르면 현재 값 유지)\n" << CR;
+
+                // 시료명
+                string name = readLine("  시료명 [" + target->getName() + "]: ");
+                if (name.empty()) name = target->getName();
+
+                // 재고
+                cout << "  재고 [" << target->getStock() << "]: ";
+                string sline; getline(cin, sline);
+                int stock = sline.empty() ? target->getStock()
+                                          : (stoi(sline) < 0 ? 0 : stoi(sline));
+
+                // 평균 생산시간
+                auto readDbl = [](const string& prompt, double cur) -> double {
+                    cout << prompt;
+                    string line; getline(cin, line);
+                    if (line.empty()) return cur;
+                    double v = 0.0;
+                    try { v = stod(line); } catch (...) { return cur; }
+                    if (v < 0.0) v = 0.0;
+                    return static_cast<int>(v * 10 + 0.5) / 10.0;
+                };
+
+                double ptime = readDbl(
+                    "  평균 생산시간(분) [" + to_string(target->getAvgProductionTime()) + "]: ",
+                    target->getAvgProductionTime());
+                double yield = readDbl(
+                    "  수율(%) [" + to_string(target->getYieldRate()) + "]: ",
+                    target->getYieldRate());
+
+                if (productManager_.updateProduct(id, name, stock, ptime, yield))
+                    cout << CG << "  수정 완료." << CR << "\n";
+                else
+                    cout << CRD << "  수정 실패." << CR << "\n";
+            }
         }
         readLine("");
     }
