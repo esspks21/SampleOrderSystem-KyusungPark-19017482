@@ -1,6 +1,7 @@
 # SampleOrderSystem-KyusungPark-19017482
 
 @PLAN.md
+@docs/PRD.md
 
 ## 프로젝트 개요
 
@@ -58,6 +59,17 @@ msbuild SampleOrderSystem-KyusungPark-19017482.slnx /p:Configuration=Debug /p:Pl
 - SDL 보안 검사 활성화 (SDLCheck)
 - 경고 수준 Level3 이상 유지
 - 한글 문자열 처리 시 Unicode 설정 활용
+
+## 에이전트
+
+### cpp-optimizer
+
+`.cpp` 또는 `.h` 파일을 생성하거나 수정할 때마다 **반드시** `cpp-optimizer` 에이전트를 실행한다.
+
+- 수정된 코드의 시간복잡도(Big-O)를 분석하고 개선점을 제시한다.
+- 런타임 성능(불필요한 복사, 루프 내 반복 연산, 컨테이너 선택 등)을 검토한다.
+- 문제가 발견되면 즉시 수정하여 코드 품질을 향상시킨다.
+- 동작(로직)은 변경하지 않고 성능만 개선한다.
 
 ## Git 무시 항목
 
