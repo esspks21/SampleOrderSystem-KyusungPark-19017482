@@ -1,1 +1,15 @@
 PLAN.md
+
+# Visual Studio
+.vs/
+*.user
+*.db
+*.opendb
+*.db-shm
+*.db-wal
+
+# Build output
+x64/
+Win32/
+Debug/
+Release/
