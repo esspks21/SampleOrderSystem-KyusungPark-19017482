@@ -243,13 +243,53 @@ void App::runProductMenu() {
             if (!target) {
                 cout << CRD << "  해당 ID의 시료가 없습니다." << CR << "\n";
             } else {
-                cout << "  " << target->toString() << "\n";
-                string confirm = readLine(string(CRD) + "  정말 삭제하시겠습니까? (y/N): " + CR);
-                if (confirm == "y" || confirm == "Y") {
-                    productManager_.deleteProduct(id);
-                    cout << CG << "  삭제 완료." << CR << "\n";
+                cout << "  " << target->toString() << "\n\n";
+
+                // ── 삭제 가능 여부 검사 ───────────────────────────
+                vector<string> reasons;
+
+                // 1. 재고 잔여
+                if (target->getStock() > 0)
+                    reasons.push_back("재고가 " + to_string(target->getStock()) +
+                                      " ea 남아있습니다.");
+
+                // 2. 활성 주문 존재 (RESERVED/PENDING/CONFIRMED/PRODUCING)
+                const vector<OrderStatus> activeStates = {
+                    OrderStatus::RESERVED, OrderStatus::PENDING,
+                    OrderStatus::CONFIRMED, OrderStatus::PRODUCING
+                };
+                int activeCount = 0;
+                for (const auto& o : orderManager_.getAll()) {
+                    if (o.getProductId() != id) continue;
+                    for (auto s : activeStates) {
+                        if (o.getStatus() == s) { activeCount++; break; }
+                    }
+                }
+                if (activeCount > 0)
+                    reasons.push_back("진행 중인 주문이 " + to_string(activeCount) +
+                                      "건 있습니다 (RESERVED/PENDING/CONFIRMED/PRODUCING).");
+
+                // 3. 현재 생산 라인에서 생산 중
+                auto prodId = productionLine_.getProducingOrderId();
+                if (prodId.has_value()) {
+                    const Order* po = orderManager_.findById(*prodId);
+                    if (po && po->getProductId() == id)
+                        reasons.push_back("현재 생산 라인에서 생산 중입니다.");
+                }
+
+                if (!reasons.empty()) {
+                    cout << CRD << BOLD << "  ✗ 삭제 불가 — 아래 사유를 확인하세요.\n" << CR;
+                    for (const auto& r : reasons)
+                        cout << CRD << "    • " << r << CR << "\n";
                 } else {
-                    cout << CGR << "  취소되었습니다." << CR << "\n";
+                    string confirm = readLine(
+                        string(CRD) + "  정말 삭제하시겠습니까? (y/N): " + CR);
+                    if (confirm == "y" || confirm == "Y") {
+                        productManager_.deleteProduct(id);
+                        cout << CG << "  삭제 완료." << CR << "\n";
+                    } else {
+                        cout << CGR << "  취소되었습니다." << CR << "\n";
+                    }
                 }
             }
         }
