@@ -1,7 +1,9 @@
 docs/PLAN.md
 
-# 누적 데이터 — 로컬 전용, Git 반영 금지
-Database/
+# Database 누적 데이터 — 로컬 전용
+# 빈 초기 파일은 GitHub에 포함, 실제 데이터는 로컬에서만 관리
+# clone 후 아래 명령으로 로컬 데이터가 git status에 표시되지 않도록 설정:
+#   git update-index --skip-worktree Database/products.csv Database/orders.csv
 
 # Visual Studio
 .vs/
