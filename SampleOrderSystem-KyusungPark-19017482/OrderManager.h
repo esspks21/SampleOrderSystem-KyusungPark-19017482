@@ -13,6 +13,7 @@ public:
     bool acceptOrder(int orderId);
     bool cancelOrder(int orderId);
     optional<OrderStatus> approveOrder(int orderId); // CONFIRMED(재고 충분) or PRODUCING(재고 부족)
+    int syncProduction(); // 현재 시각 기준 완료된 생산 처리, 완료 건수 반환
     bool rejectOrder(int orderId);
     bool releaseOrder(int orderId, ProductManager& pm);
 

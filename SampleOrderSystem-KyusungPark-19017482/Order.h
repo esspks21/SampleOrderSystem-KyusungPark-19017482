@@ -17,6 +17,11 @@ public:
 
     void setStatus(OrderStatus status);
     void setCreatedAt(time_t t);
+    void setProducingStartedAt(time_t t);
+    void setProducingActualQty(int qty);
+
+    time_t getProducingStartedAt() const;
+    int    getProducingActualQty()  const;
 
     string toString() const;
     string getCreatedAtStr() const;
@@ -28,4 +33,6 @@ private:
     int quantity_;
     OrderStatus status_;
     time_t createdAt_;
+    time_t producingStartedAt_ = 0; // 실제 생산 시작 예정 시각
+    int    producingActualQty_ = 0; // 실제 생산 수량 (수율·오차 반영)
 };

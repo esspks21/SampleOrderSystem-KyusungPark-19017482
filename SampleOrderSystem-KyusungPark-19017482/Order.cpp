@@ -18,8 +18,12 @@ int         Order::getQuantity()    const { return quantity_; }
 OrderStatus Order::getStatus()      const { return status_; }
 time_t      Order::getCreatedAt()   const { return createdAt_; }
 
-void Order::setStatus(OrderStatus status) { status_ = status; }
-void Order::setCreatedAt(time_t t)        { createdAt_ = t; }
+void Order::setStatus(OrderStatus status)          { status_ = status; }
+void Order::setCreatedAt(time_t t)                 { createdAt_ = t; }
+void Order::setProducingStartedAt(time_t t)        { producingStartedAt_ = t; }
+void Order::setProducingActualQty(int qty)         { producingActualQty_ = qty; }
+time_t Order::getProducingStartedAt() const        { return producingStartedAt_; }
+int    Order::getProducingActualQty()  const        { return producingActualQty_; }
 
 string Order::getCreatedAtStr() const {
     tm local{};

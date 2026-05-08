@@ -41,11 +41,16 @@ void App::clearScreen() {
 // ── 생성자 ────────────────────────────────────────────────
 App::App()
     : orderManager_(productManager_),
-      productionLine_(orderManager_),
+      productionLine_(orderManager_, productManager_),
       monitor_(productManager_, orderManager_),
       jsonRepository_(productManager_, orderManager_, productionLine_)
 {
-    jsonRepository_.load();  // Database/*.json 에서 누적 데이터 복원
+    jsonRepository_.load();
+    int completed = orderManager_.syncProduction();
+    if (completed > 0) {
+        jsonRepository_.save();
+        cout << CG << "[시스템] 오프라인 중 완료된 생산 " << completed << "건을 반영했습니다." << CR << "\n";
+    }
 }
 
 // ── 메인 루프 ─────────────────────────────────────────────
@@ -393,21 +398,18 @@ void App::runProductionMenu() {
     while (true) {
         clearScreen();
         cout << CB << BOLD << "[ 생산 라인 ]" << CR << "\n\n";
-        cout << "  " << CC << "1." << CR << " 생산 현황 보기\n";
-        cout << "  " << CC << "2." << CR << " 생산 시작  (CONFIRMED → PRODUCING)\n";
-        cout << "  " << CC << "3." << CR << " 생산 완료  (PRODUCING → RELEASE)\n";
+        cout << "  " << CC << "1." << CR << " 생산 현황 조회\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
-        if (c == 1) productionLine_.showStatus();
-        else if (c == 2)
-            cout << (productionLine_.startNext()
-                     ? string(CG) + "생산 시작." + CR
-                     : string(CRD) + "실패 (대기 큐 없음 또는 이미 생산 중)." + CR) << "\n";
-        else if (c == 3)
-            cout << (productionLine_.completeProducing()
-                     ? string(CG) + "생산 완료. 출고 처리됨." + CR
-                     : string(CRD) + "실패 (생산 중인 주문 없음)." + CR) << "\n";
+        if (c == 1) {
+            int synced = orderManager_.syncProduction();
+            if (synced > 0) {
+                jsonRepository_.save();
+                cout << CG << "생산 완료 " << synced << "건 반영됨.\n" << CR;
+            }
+            productionLine_.showStatus();
+        }
         readLine("");
     }
 }

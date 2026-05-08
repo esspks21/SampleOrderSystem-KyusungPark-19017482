@@ -185,7 +185,9 @@ void JsonRepository::saveOrders() const {
           << ",\"productId\":" << o.getProductId()
           << ",\"qty\":" << o.getQuantity()
           << ",\"status\":" << static_cast<int>(o.getStatus())
-          << ",\"createdAt\":" << static_cast<long long>(o.getCreatedAt()) << "}";
+          << ",\"createdAt\":" << static_cast<long long>(o.getCreatedAt())
+          << ",\"producingStartedAt\":" << static_cast<long long>(o.getProducingStartedAt())
+          << ",\"producingActualQty\":" << o.getProducingActualQty() << "}";
         if (i + 1 < items.size()) f << ",";
         f << "\n";
     }
@@ -260,6 +262,13 @@ void JsonRepository::loadOrders() {
         if (id > 0) {
             om_.restoreOrder(id, customer, productId, qty,
                              static_cast<OrderStatus>(statusInt), createdAt);
+            Order* restored = om_.findById(id);
+            if (restored) {
+                time_t psa = static_cast<time_t>(jInt(obj, "producingStartedAt"));
+                int    paq = static_cast<int>(jInt(obj, "producingActualQty"));
+                restored->setProducingStartedAt(psa > 0 ? psa : 0);
+                restored->setProducingActualQty(paq > 0 ? paq : 0);
+            }
         }
     }
 }

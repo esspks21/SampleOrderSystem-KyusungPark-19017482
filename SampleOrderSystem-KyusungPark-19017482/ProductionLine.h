@@ -6,21 +6,18 @@ using namespace std;
 
 class ProductionLine {
 public:
-    explicit ProductionLine(OrderManager& om);
+    explicit ProductionLine(OrderManager& om, ProductManager& pm);
 
-    void enqueue(int orderId);
-    bool startNext();
-    bool completeProducing();
-    void showStatus() const;
-    bool isProducing() const;
-    optional<int> getProducingOrderId() const;
-    const queue<int>& getWaitingQueue() const;
-
-    void setProducingOrderId(optional<int> id);
+    void showStatus() const;  // 생산 현황 표시 (시간 기반 진행률 포함)
     void clearAll();
 
+    // JsonRepository 호환용 (내부 상태 없음 — orders에서 직접 읽음)
+    void          enqueue(int) {}
+    void          setProducingOrderId(optional<int>) {}
+    optional<int> getProducingOrderId() const { return nullopt; }
+    queue<int>    getWaitingQueue()     const { return {}; }
+
 private:
-    queue<int>    waitingQueue_;
-    optional<int> producingOrderId_;
-    OrderManager&      orderManager_;
+    OrderManager&  orderManager_;
+    ProductManager& productManager_;
 };
