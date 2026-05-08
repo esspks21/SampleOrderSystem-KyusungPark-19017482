@@ -1,9 +1,10 @@
-#include "OrderManager.h"
+﻿#include "OrderManager.h"
 #include <iostream>
+using namespace std;
 
 OrderManager::OrderManager(ProductManager& pm) : productManager_(pm) {}
 
-bool OrderManager::reserveOrder(const std::string& customerName, int productId, int quantity) {
+bool OrderManager::reserveOrder(const string& customerName, int productId, int quantity) {
     if (!productManager_.findById(productId)) return false;
     if (quantity <= 0) return false;
     orders_.emplace_back(nextId_++, customerName, productId, quantity);
@@ -28,22 +29,22 @@ bool OrderManager::cancelOrder(int orderId) {
 
 void OrderManager::listOrders() const {
     if (orders_.empty()) {
-        std::cout << "  주문이 없습니다.\n";
+        cout << "  주문이 없습니다.\n";
         return;
     }
     for (const auto& o : orders_)
-        std::cout << "  " << o.toString() << "\n";
+        cout << "  " << o.toString() << "\n";
 }
 
 void OrderManager::listOrdersByStatus(OrderStatus status) const {
     bool found = false;
     for (const auto& o : orders_) {
         if (o.getStatus() == status) {
-            std::cout << "  " << o.toString() << "\n";
+            cout << "  " << o.toString() << "\n";
             found = true;
         }
     }
-    if (!found) std::cout << "  해당 상태의 주문이 없습니다.\n";
+    if (!found) cout << "  해당 상태의 주문이 없습니다.\n";
 }
 
 Order* OrderManager::findById(int id) {
@@ -58,7 +59,7 @@ const Order* OrderManager::findById(int id) const {
     return nullptr;
 }
 
-const std::vector<Order>& OrderManager::getAll() const { return orders_; }
+const vector<Order>& OrderManager::getAll() const { return orders_; }
 
 int OrderManager::countByStatus(OrderStatus status) const {
     int count = 0;
@@ -91,11 +92,11 @@ bool OrderManager::rejectOrder(int orderId) {
     return true;
 }
 
-void OrderManager::restoreOrder(int id, const std::string& customerName,
+void OrderManager::restoreOrder(int id, const string& customerName,
                                 int productId, int quantity, OrderStatus status) {
     Order o(id, customerName, productId, quantity);
     o.setStatus(status);
-    orders_.push_back(std::move(o));
+    orders_.push_back(move(o));
 }
 
 void OrderManager::setNextId(int id) { nextId_ = id; }

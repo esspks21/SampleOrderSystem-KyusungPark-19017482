@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include "Order.h"
 #include "ProductManager.h"
@@ -7,16 +7,11 @@ class OrderManager {
 public:
     explicit OrderManager(ProductManager& pm);
 
-    // Phase 3
     bool reserveOrder(const std::string& customerName, int productId, int quantity);
     bool acceptOrder(int orderId);
     bool cancelOrder(int orderId);
-
-    // Phase 4
     bool approveOrder(int orderId);
     bool rejectOrder(int orderId);
-
-    // Phase 6
     bool releaseOrder(int orderId, ProductManager& pm);
 
     void listOrders() const;

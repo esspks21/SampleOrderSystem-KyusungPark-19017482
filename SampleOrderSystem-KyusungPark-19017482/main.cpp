@@ -1,6 +1,7 @@
-#include "App.h"
+﻿#include "App.h"
 #ifdef _WIN32
 #include <windows.h>
+using namespace std;
 #endif
 
 int main() {

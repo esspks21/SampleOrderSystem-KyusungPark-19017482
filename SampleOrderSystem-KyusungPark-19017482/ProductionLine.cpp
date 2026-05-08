@@ -1,5 +1,6 @@
-#include "ProductionLine.h"
+﻿#include "ProductionLine.h"
 #include <iostream>
+using namespace std;
 
 ProductionLine::ProductionLine(OrderManager& om) : orderManager_(om) {}
 
@@ -31,39 +32,39 @@ bool ProductionLine::isProducing() const {
     return producingOrderId_.has_value();
 }
 
-std::optional<int> ProductionLine::getProducingOrderId() const {
+optional<int> ProductionLine::getProducingOrderId() const {
     return producingOrderId_;
 }
 
-const std::queue<int>& ProductionLine::getWaitingQueue() const {
+const queue<int>& ProductionLine::getWaitingQueue() const {
     return waitingQueue_;
 }
 
-void ProductionLine::setProducingOrderId(std::optional<int> id) {
+void ProductionLine::setProducingOrderId(optional<int> id) {
     producingOrderId_ = id;
 }
 
 void ProductionLine::showStatus() const {
     if (producingOrderId_.has_value()) {
         const Order* o = orderManager_.findById(*producingOrderId_);
-        std::cout << "  [생산 중] "
-                  << (o ? o->toString() : "ID:" + std::to_string(*producingOrderId_)) << "\n";
+        cout << "  [생산 중] "
+                  << (o ? o->toString() : "ID:" + to_string(*producingOrderId_)) << "\n";
     } else {
-        std::cout << "  [생산 중] 없음\n";
+        cout << "  [생산 중] 없음\n";
     }
 
     if (waitingQueue_.empty()) {
-        std::cout << "  [대기 큐] 없음\n";
+        cout << "  [대기 큐] 없음\n";
         return;
     }
 
     auto q = waitingQueue_;
     int  pos = 1;
-    std::cout << "  [대기 큐]\n";
+    cout << "  [대기 큐]\n";
     while (!q.empty()) {
         int id = q.front(); q.pop();
         const Order* o = orderManager_.findById(id);
-        std::cout << "    " << pos++ << ". "
-                  << (o ? o->toString() : "ID:" + std::to_string(id)) << "\n";
+        cout << "    " << pos++ << ". "
+                  << (o ? o->toString() : "ID:" + to_string(id)) << "\n";
     }
 }

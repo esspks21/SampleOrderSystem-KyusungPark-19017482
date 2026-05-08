@@ -1,23 +1,24 @@
-#include "ProductManager.h"
+﻿#include "ProductManager.h"
 #include <iostream>
+using namespace std;
 
-void ProductManager::addProduct(const std::string& name, int stock) {
+void ProductManager::addProduct(const string& name, int stock) {
     products_.emplace_back(nextId_++, name, stock);
 }
 
 void ProductManager::listProducts() const {
     if (products_.empty()) {
-        std::cout << "  등록된 시료가 없습니다.\n";
+        cout << "  등록된 시료가 없습니다.\n";
         return;
     }
     for (const auto& p : products_)
-        std::cout << "  " << p.toString() << "\n";
+        cout << "  " << p.toString() << "\n";
 }
 
-std::vector<Product> ProductManager::searchByName(const std::string& keyword) const {
-    std::vector<Product> result;
+vector<Product> ProductManager::searchByName(const string& keyword) const {
+    vector<Product> result;
     for (const auto& p : products_)
-        if (p.getName().find(keyword) != std::string::npos)
+        if (p.getName().find(keyword) != string::npos)
             result.push_back(p);
     return result;
 }
@@ -43,9 +44,9 @@ const Product* ProductManager::findById(int id) const {
     return nullptr;
 }
 
-const std::vector<Product>& ProductManager::getAll() const { return products_; }
+const vector<Product>& ProductManager::getAll() const { return products_; }
 
-void ProductManager::restoreProduct(int id, const std::string& name, int stock) {
+void ProductManager::restoreProduct(int id, const string& name, int stock) {
     products_.emplace_back(id, name, stock);
 }
 
