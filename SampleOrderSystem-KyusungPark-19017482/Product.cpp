@@ -23,7 +23,7 @@ string Product::toString() const {
     oss << fixed << setprecision(1);
     oss << left  << setw(6)  << id_
         << "\t"  << setw(28) << name_
-        << "\t"  << right << setw(10) << avgProductionTime_
+        << "\t"  << right << setw(8) << avgProductionTime_ << " min/ea"
         << "\t"  << setw(8)  << yieldRate_
         << "\t"  << setw(6)  << stock_;
     return oss.str();

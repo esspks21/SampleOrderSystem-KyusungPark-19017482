@@ -23,7 +23,7 @@ static void printProductHeader() {
     cout << "  "
          << left  << setw(6)  << "ID"
          << "\t" << setw(28) << "시료명"
-         << "\t" << setw(16) << "평균생산(min)"
+         << "\t" << setw(18) << "평균 생산 시간"
          << "\t" << setw(10) << "수율(%)"
          << "\t" << "재고(ea)" << "\n";
     cout << "  " << string(75, '-') << "\n";
