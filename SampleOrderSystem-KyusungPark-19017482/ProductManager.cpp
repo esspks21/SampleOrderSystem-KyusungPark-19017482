@@ -1,25 +1,47 @@
 ﻿#include "ProductManager.h"
 #include <iostream>
+#include <algorithm>
+#include <cctype>
 using namespace std;
+
+namespace {
+    string toLower(const string& s) {
+        string result = s;
+        transform(result.begin(), result.end(), result.begin(),
+                  [](unsigned char c) { return tolower(c); });
+        return result;
+    }
+}
 
 void ProductManager::addProduct(const string& name, int stock) {
     products_.emplace_back(nextId_++, name, stock);
 }
 
-void ProductManager::listProducts() const {
+void ProductManager::listProducts(bool ascending) const {
     if (products_.empty()) {
         cout << "  등록된 시료가 없습니다.\n";
         return;
     }
-    for (const auto& p : products_)
+    vector<Product> sorted = products_;
+    sort(sorted.begin(), sorted.end(), [ascending](const Product& a, const Product& b) {
+        return ascending ? a.getId() < b.getId() : a.getId() > b.getId();
+    });
+    for (const auto& p : sorted)
         cout << "  " << p.toString() << "\n";
 }
 
-vector<Product> ProductManager::searchByName(const string& keyword) const {
+vector<Product> ProductManager::search(const string& keyword, bool ascending) const {
+    const string kw = toLower(keyword);
     vector<Product> result;
-    for (const auto& p : products_)
-        if (p.getName().find(keyword) != string::npos)
+    for (const auto& p : products_) {
+        bool matchId   = toLower(to_string(p.getId())).find(kw) != string::npos;
+        bool matchName = toLower(p.getName()).find(kw) != string::npos;
+        if (matchId || matchName)
             result.push_back(p);
+    }
+    sort(result.begin(), result.end(), [ascending](const Product& a, const Product& b) {
+        return ascending ? a.getId() < b.getId() : a.getId() > b.getId();
+    });
     return result;
 }
 

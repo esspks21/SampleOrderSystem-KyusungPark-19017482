@@ -7,8 +7,8 @@ using namespace std;
 class ProductManager {
 public:
     void addProduct(const string& name, int stock);
-    void listProducts() const;
-    vector<Product> searchByName(const string& keyword) const;
+    void listProducts(bool ascending = true) const;
+    vector<Product> search(const string& keyword, bool ascending = true) const;
     bool updateStock(int id, int delta);
     Product* findById(int id);
     const Product* findById(int id) const;
