@@ -16,6 +16,7 @@ public:
     int syncProduction(); // 현재 시각 기준 완료된 생산 처리, 완료 건수 반환
     bool rejectOrder(int orderId);
     bool releaseOrder(int orderId, ProductManager& pm);
+    int  processAllRelease(ProductManager& pm); // CONFIRMED 전체 자동 출고, 완료 건수 반환
 
     void listOrders() const;
     void listOrdersByStatus(OrderStatus status) const;

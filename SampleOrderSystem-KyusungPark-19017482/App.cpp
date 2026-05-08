@@ -378,16 +378,33 @@ void App::runReleaseMenu() {
     while (true) {
         clearScreen();
         cout << CB << BOLD << "[ 출고 처리 ]" << CR << "\n\n";
-        cout << "  " << CC << "1." << CR << " CONFIRMED 주문 출고 (재고 차감)\n";
+        cout << "  " << CC << "1." << CR << " 출고 대기 목록 조회  (CONFIRMED)\n";
+        cout << "  " << CC << "2." << CR << " 특정 주문 출고\n";
+        cout << "  " << CC << "3." << CR << " 전체 자동 출고       (CONFIRMED → RELEASE 일괄 처리)\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
+
         if (c == 1) {
             orderManager_.listOrdersByStatus(OrderStatus::CONFIRMED);
+        } else if (c == 2) {
+            orderManager_.listOrdersByStatus(OrderStatus::CONFIRMED);
             int id = readInt("출고할 주문 ID: ");
-            cout << (orderManager_.releaseOrder(id, productManager_)
-                     ? string(CG) + "출고 완료. 재고 차감됨." + CR
-                     : string(CRD) + "출고 실패 (재고 부족 또는 상태 오류)." + CR) << "\n";
+            if (id == BACK) { readLine(""); continue; }
+            if (orderManager_.releaseOrder(id, productManager_)) {
+                fileRepository_.save();
+                cout << CG << "출고 완료. 재고 차감됨." << CR << "\n";
+            } else {
+                cout << CRD << "출고 실패 (CONFIRMED 상태 주문 또는 재고 확인)." << CR << "\n";
+            }
+        } else if (c == 3) {
+            int released = orderManager_.processAllRelease(productManager_);
+            if (released > 0) {
+                fileRepository_.save();
+                cout << CG << released << "건 출고 완료." << CR << "\n";
+            } else {
+                cout << CY << "출고 처리할 CONFIRMED 주문이 없습니다." << CR << "\n";
+            }
         }
         readLine("");
     }

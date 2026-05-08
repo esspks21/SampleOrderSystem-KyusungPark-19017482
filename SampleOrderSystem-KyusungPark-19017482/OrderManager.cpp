@@ -80,6 +80,19 @@ bool OrderManager::releaseOrder(int orderId, ProductManager& pm) {
     return true;
 }
 
+int OrderManager::processAllRelease(ProductManager& pm) {
+    int count = 0;
+    for (auto& o : orders_) {
+        if (o.getStatus() != OrderStatus::CONFIRMED) continue;
+        const Product* p = pm.findById(o.getProductId());
+        if (!p || p->getStock() < o.getQuantity()) continue;
+        pm.updateStock(o.getProductId(), -o.getQuantity());
+        o.setStatus(OrderStatus::RELEASE);
+        ++count;
+    }
+    return count;
+}
+
 optional<OrderStatus> OrderManager::approveOrder(int orderId) {
     Order* o = findById(orderId);
     if (!o || o->getStatus() != OrderStatus::PENDING) return nullopt;
