@@ -132,6 +132,16 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Product.cpp" />
+    <ClCompile Include="Order.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="OrderStatus.h" />
+    <ClInclude Include="Product.h" />
+    <ClInclude Include="Order.h" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="..\CLAUDE.md" />
     <None Include="..\PLAN.md" />
     <None Include="..\docs\PRD.md" />
