@@ -210,7 +210,7 @@ void JsonRepository::loadProducts() {
             catch (...) { return 0.0; }
         };
 
-        double avgProdTime = parseDouble("avgProductionTime");
+        double avgProdTime = parseDouble("productionTime");
         double yieldRate   = parseDouble("yieldRate");
 
         if (id > 0) pm_.restoreProduct(id, name, stock, avgProdTime, yieldRate);
