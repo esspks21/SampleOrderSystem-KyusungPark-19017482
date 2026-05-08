@@ -136,12 +136,14 @@
     <ClCompile Include="Product.cpp" />
     <ClCompile Include="Order.cpp" />
     <ClCompile Include="ProductManager.cpp" />
+    <ClCompile Include="OrderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OrderStatus.h" />
     <ClInclude Include="Product.h" />
     <ClInclude Include="Order.h" />
     <ClInclude Include="ProductManager.h" />
+    <ClInclude Include="OrderManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CLAUDE.md" />
