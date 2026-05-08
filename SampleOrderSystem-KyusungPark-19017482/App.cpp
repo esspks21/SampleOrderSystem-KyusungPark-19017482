@@ -10,7 +10,7 @@ using namespace std;
 namespace {
     const char* CR   = "\033[0m";         // Reset
     const char* BOLD = "\033[1m";         // Bold
-    const char* CB   = "\033[94m";        // Bright Blue  (Samsung 브랜드 색상)
+    const char* CB   = "\033[38;2;20;40;160m"; // Samsung Blue PMS286C  RGB(20,40,160) #1428A0
     const char* CW   = "\033[97m";        // White
     const char* CY   = "\033[93m";        // Yellow  (시간 강조)
     const char* CC   = "\033[96m";        // Cyan    (메뉴 번호)
