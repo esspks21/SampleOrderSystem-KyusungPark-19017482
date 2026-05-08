@@ -147,6 +147,17 @@ Claude가 코드를 작성·수정할 때 아래 5가지 주안점을 항상 준
 - 결과는 `RegressionTest/results/regression_<timestamp>.txt`에 저장된다. (git 미반영)
 - FAIL 항목이 발생하면 원인을 분석하고 즉시 코드를 수정한 뒤 재실행한다.
 
+## 스킬
+
+### algo-complexity-review
+
+검색·추가·삭제·정렬 등 핵심 연산의 Big-O 복잡도를 분석하고 더 나은 알고리즘 또는 자료구조를 제안할 때 `/algo-complexity-review` 스킬을 사용한다.
+
+- 현재 자료구조(vector, list 등)와 연산 패턴의 복잡도를 측정한다.
+- O(N) 선형 검색 → O(1) 해시 / O(log N) 이진 탐색 등 구체적 대안을 제안한다.
+- 병목이 실질적인 경우에만 교체를 권장하며, N이 작은 경우는 불필요한 변경을 피한다.
+- 스킬 파일: `.claude/skills/algo-complexity-review.md`
+
 ## Git 무시 항목
 
 - `.vs/` — Visual Studio 로컬 캐시
