@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ProductManager.h"
 #include "OrderManager.h"
 #include "ProductionLine.h"
@@ -28,6 +28,8 @@ private:
     void runReleaseMenu();
     void runProductionMenu();
 
-    static int         readInt(const string& prompt);
+    static string getCurrentTime();
+    static int    readInt(const string& prompt);
     static string readLine(const string& prompt);
+    static void   clearScreen();
 };
