@@ -36,12 +36,13 @@ int Monitor::activeDemand(int productId) const {
 
 // ── 주문 현황 ─────────────────────────────────────────────────
 void Monitor::showOrderSection() const {
-    const vector<pair<OrderStatus, const char*>> targets = {
-        {OrderStatus::RESERVED,  "RESERVED "},
-        {OrderStatus::PENDING,   "PENDING  "},
-        {OrderStatus::CONFIRMED, "CONFIRMED"},
-        {OrderStatus::PRODUCING, "PRODUCING"},
-        {OrderStatus::RELEASE,   "RELEASE  "},
+    struct StatusInfo { OrderStatus status; const char* label; const char* badge; };
+    const vector<StatusInfo> targets = {
+        {OrderStatus::RESERVED,  "RESERVED ", ""},
+        {OrderStatus::PENDING,   "PENDING  ", ""},
+        {OrderStatus::CONFIRMED, "CONFIRMED", ""},
+        {OrderStatus::PRODUCING, "PRODUCING", ""},
+        {OrderStatus::RELEASE,   "RELEASE  ", " ✓ 완료"},
     };
 
     cout << CB << BOLD << "  ▶ 주문 현황" << CR
@@ -53,21 +54,23 @@ void Monitor::showOrderSection() const {
          << CW   << "주요 주문 (최대 4건)" << CR << "\n";
     cout << LINE;
 
-    for (const auto& [status, label] : targets) {
-        int count = om_.countByStatus(status);
+    for (const auto& info : targets) {
+        int count = om_.countByStatus(info.status);
 
         // 상태별 색상
-        const char* col = (status == OrderStatus::RELEASE)   ? CG  :
-                          (status == OrderStatus::CONFIRMED)  ? CG  :
-                          (status == OrderStatus::PRODUCING)  ? CY  : CW;
+        const char* col = (info.status == OrderStatus::RELEASE)   ? CG  :
+                          (info.status == OrderStatus::CONFIRMED)  ? CG  :
+                          (info.status == OrderStatus::PRODUCING)  ? CY  : CW;
 
-        cout << "  " << col << BOLD << setw(13) << label << CR
-             << "  " << CW  << setw(4)  << count << "건" << CR;
+        cout << "  " << col << BOLD << setw(13) << info.label << CR;
+        if (info.badge[0] != '\0')
+            cout << CG << BOLD << info.badge << CR;
+        cout << "  " << CW << setw(4) << count << "건" << CR;
 
         // 최대 4개 주문 요약
         int shown = 0;
         for (const auto& o : om_.getAll()) {
-            if (o.getStatus() != status) continue;
+            if (o.getStatus() != info.status) continue;
             if (shown == 0) cout << "   ";
             else            cout << " | ";
             cout << CC << "[" << o.getId() << "]" << CR

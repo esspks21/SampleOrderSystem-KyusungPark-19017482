@@ -41,6 +41,14 @@ void App::clearScreen() {
     system("cls");
 }
 
+// ── 생산 완료 + 자동 출고 동기화 ─────────────────────────────
+int App::doSync() {
+    int produced = orderManager_.syncProduction();
+    int released = orderManager_.processAllRelease(productManager_);
+    if (produced + released > 0) fileRepository_.save();
+    return produced + released;
+}
+
 // ── 생성자 ────────────────────────────────────────────────
 App::App()
     : orderManager_(productManager_),
@@ -49,10 +57,14 @@ App::App()
       fileRepository_(productManager_, orderManager_, productionLine_)
 {
     fileRepository_.load();
-    int completed = orderManager_.syncProduction();
-    if (completed > 0) {
+    int produced = orderManager_.syncProduction();
+    int released = orderManager_.processAllRelease(productManager_);
+    if (produced + released > 0) {
         fileRepository_.save();
-        cout << CG << "[시스템] 오프라인 중 완료된 생산 " << completed << "건을 반영했습니다." << CR << "\n";
+        if (produced > 0)
+            cout << CG << "[시스템] 오프라인 중 완료된 생산 " << produced << "건 반영." << CR << "\n";
+        if (released > 0)
+            cout << CG << "[시스템] 오프라인 중 자동 출고 " << released << "건 처리." << CR << "\n";
     }
 }
 
@@ -133,7 +145,7 @@ void App::printMainMenu() const {
     cout << "  " << CC << BOLD << "1." << CR << "  시료 관리\n";
     cout << "  " << CC << BOLD << "2." << CR << "  주문 관리\n";
     cout << "  " << CC << BOLD << "3." << CR << "  모니터링\n";
-    cout << "  " << CC << BOLD << "4." << CR << "  출고 처리\n";
+    cout << "  " << CC << BOLD << "4." << CR << "  출고 내역\n";
     cout << "  " << CC << BOLD << "5." << CR << "  생산 라인\n";
     cout << "  " << CRD << "9." << CR << "  데이터 초기화  (관리자)\n";
     cout << "  " << CGR << "0." << CR << "  종료\n";
@@ -336,9 +348,15 @@ void App::runOrderMenu() {
             if (!result) {
                 cout << CRD << "승인 실패 (PENDING 상태 주문만 승인 가능)." << CR << "\n";
             } else if (*result == OrderStatus::CONFIRMED) {
-                cout << CG << "승인 완료. 재고 충분 → CONFIRMED (출고 대기)." << CR << "\n";
+                // 재고 충분 → CONFIRMED → 즉시 자동 출고
+                int released = orderManager_.processAllRelease(productManager_);
+                fileRepository_.save();
+                if (released > 0)
+                    cout << CG << "승인 완료. 재고 충분 → 자동 출고 처리 (RELEASE)." << CR << "\n";
+                else
+                    cout << CG << "승인 완료. 재고 충분 → CONFIRMED." << CR << "\n";
             } else {
-                productionLine_.enqueue(id);
+                fileRepository_.save();
                 cout << CY << "승인 완료. 재고 부족 → 생산 라인 등록 (PRODUCING)." << CR << "\n";
             }
         } else if (c == 4) {
@@ -368,9 +386,8 @@ void App::runMonitorMenu() {
     while (true) {
         clearScreen();
 
-        // 생산 완료 체크 후 자동 반영
-        int synced = orderManager_.syncProduction();
-        if (synced > 0) fileRepository_.save();
+        // 생산 완료 + 자동 출고
+        doSync();
 
         // 헤더 + 대시보드
         cout << "\033[38;2;20;40;160m" << "\033[1m"
@@ -392,38 +409,19 @@ void App::runMonitorMenu() {
     }
 }
 
-// ── 출고 처리 ─────────────────────────────────────────────
+// ── 출고 내역 ─────────────────────────────────────────────
+// 출고는 재고 충분 시 자동 처리 — 이 화면은 내역 조회 전용
 void App::runReleaseMenu() {
     while (true) {
         clearScreen();
-        cout << CB << BOLD << "[ 출고 처리 ]" << CR << "\n\n";
-        cout << "  " << CC << "1." << CR << " 출고 대기 목록 조회  (CONFIRMED)\n";
-        cout << "  " << CC << "2." << CR << " 특정 주문 출고\n";
-        cout << "  " << CC << "3." << CR << " 전체 자동 출고       (CONFIRMED → RELEASE 일괄 처리)\n";
+        cout << CB << BOLD << "[ 출고 내역 ]" << CR << "\n\n";
+        cout << "  " << CC << "1." << CR << " 출고 완료 목록 조회  (RELEASE)\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
 
         if (c == 1) {
-            orderManager_.listOrdersByStatus(OrderStatus::CONFIRMED);
-        } else if (c == 2) {
-            orderManager_.listOrdersByStatus(OrderStatus::CONFIRMED);
-            int id = readInt("출고할 주문 ID: ");
-            if (id == BACK) { readLine(""); continue; }
-            if (orderManager_.releaseOrder(id, productManager_)) {
-                fileRepository_.save();
-                cout << CG << "출고 완료. 재고 차감됨." << CR << "\n";
-            } else {
-                cout << CRD << "출고 실패 (CONFIRMED 상태 주문 또는 재고 확인)." << CR << "\n";
-            }
-        } else if (c == 3) {
-            int released = orderManager_.processAllRelease(productManager_);
-            if (released > 0) {
-                fileRepository_.save();
-                cout << CG << released << "건 출고 완료." << CR << "\n";
-            } else {
-                cout << CY << "출고 처리할 CONFIRMED 주문이 없습니다." << CR << "\n";
-            }
+            orderManager_.listOrdersByStatus(OrderStatus::RELEASE);
         }
         readLine("");
     }
@@ -437,16 +435,15 @@ void App::runProductionMenu() {
     while (true) {
         clearScreen();
 
-        // 생산 완료 체크
-        int synced = orderManager_.syncProduction();
-        if (synced > 0) fileRepository_.save();
+        // 생산 완료 + 자동 출고
+        int synced = doSync();
 
         // 헤더
         cout << "\033[38;2;20;40;160m\033[1m"
              << "  ═══════════════════════════════════════════════════════════\n"
              << "    생산 라인 현황  " << getCurrentTime();
         if (synced > 0)
-            cout << "  \033[92m[생산 완료 " << synced << "건 반영]\033[0m";
+            cout << "  \033[92m[" << synced << "건 반영]\033[0m";
         cout << "\n\033[38;2;20;40;160m\033[1m"
              << "  ═══════════════════════════════════════════════════════════\n"
              << "\033[0m\n";

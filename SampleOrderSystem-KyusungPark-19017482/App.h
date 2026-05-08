@@ -30,6 +30,8 @@ private:
     void runProductionMenu();
     void runResetMenu();               // 비밀번호 인증 후 데이터 초기화
 
+    int doSync(); // syncProduction() + processAllRelease() + save
+
     static string getCurrentTime();
     static int    readInt(const string& prompt);
     static string readLine(const string& prompt);
