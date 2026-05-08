@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <unordered_map>
 #include <vector>
 #include <cmath>
 using namespace std;
@@ -35,10 +36,16 @@ void ProductionLine::showStatus() const {
         return;
     }
 
+    // 제품 ID → Product 맵 캐싱 (루프마다 O(N) 검색 → O(1) 조회)
+    unordered_map<int, const Product*> productCache;
+    for (const auto& prod : productManager_.getAll())
+        productCache[prod.getId()] = &prod;
+
     bool firstShown = false;
     int queuePos = 1;
     for (const Order* o : producing) {
-        const Product* p = productManager_.findById(o->getProductId());
+        auto it = productCache.find(o->getProductId());
+        const Product* p = (it != productCache.end()) ? it->second : nullptr;
         double durationSec = (p ? p->getAvgProductionTime() : 30.0)
                              * o->getProducingActualQty() * 60.0;
         time_t startTime   = o->getProducingStartedAt();

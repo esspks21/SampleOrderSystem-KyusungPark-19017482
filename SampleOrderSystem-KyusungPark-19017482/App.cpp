@@ -247,8 +247,11 @@ void App::runProductMenu() {
                 // 재고
                 cout << "  재고 [" << target->getStock() << "]: ";
                 string sline; getline(cin, sline);
-                int stock = sline.empty() ? target->getStock()
-                                          : (stoi(sline) < 0 ? 0 : stoi(sline));
+                int stock = target->getStock();
+                if (!sline.empty()) {
+                    try { int v = stoi(sline); stock = (v < 0) ? 0 : v; }
+                    catch (...) {}
+                }
 
                 // 평균 생산시간
                 auto readDbl = [](const string& prompt, double cur) -> double {
