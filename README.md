@@ -70,6 +70,21 @@ PENDING
 
 ---
 
+## 시작하기 (Clone 후 설정)
+
+```bash
+# 1. 저장소 clone
+git clone https://github.com/esspks21/SampleOrderSystem-KyusungPark-19017482.git
+
+# 2. 로컬 데이터가 git status에 표시되지 않도록 설정 (권장)
+git update-index --skip-worktree Database/products.csv Database/orders.csv
+```
+
+> `Database/products.csv`, `Database/orders.csv`는 비어있는 초기 파일로 포함됩니다.
+> 프로그램을 실행하면 개인 데이터가 로컬에만 누적되며 GitHub에 반영되지 않습니다.
+
+---
+
 ## 빌드 방법
 
 **Visual Studio에서 열기 (권장)**
