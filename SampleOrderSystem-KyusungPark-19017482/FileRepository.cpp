@@ -9,7 +9,7 @@ FileRepository::FileRepository(ProductManager& pm, OrderManager& om, ProductionL
     : productManager_(pm), orderManager_(om), productionLine_(pl) {}
 
 void FileRepository::ensureDataDir() const {
-    filesystem::create_directories("data");
+    filesystem::create_directories(kDatabaseDir);
 }
 
 void FileRepository::save() const {
