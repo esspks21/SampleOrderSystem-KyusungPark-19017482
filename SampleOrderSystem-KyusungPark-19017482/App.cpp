@@ -7,7 +7,7 @@
 #include <conio.h>      // _getch() — 비밀번호 입력 마스킹 (Windows)
 using namespace std;
 
-// ── ANSI 색상 코드 ─────────────────────────────────────────
+// ── ANSI 색상 코드 + 입력 상수 ───────────────────────────────
 namespace {
     const char* CR   = "\033[0m";         // Reset
     const char* BOLD = "\033[1m";         // Bold
@@ -18,6 +18,9 @@ namespace {
     const char* CG   = "\033[92m";        // Green   (성공)
     const char* CRD  = "\033[91m";        // Red     (경고)
     const char* CGR  = "\033[90m";        // Gray    (구분선)
+
+    // 빈 입력(Enter만 누름) 시 readInt가 반환하는 특별값 — 이전 화면으로 복귀
+    constexpr int BACK = -9999;
 }
 
 // ── 현재 시간 ─────────────────────────────────────────────
@@ -55,6 +58,8 @@ void App::run() {
 
         int choice = readInt(string(CC) + "선택" + CR + " > ");
         cout << "\n";
+
+        if (choice == BACK) continue;       // 빈 입력 → 메인 메뉴 재표시
 
         switch (choice) {
         case 1: runProductMenu();    break;
@@ -153,7 +158,7 @@ void App::runProductMenu() {
         cout << "  " << CC << "3." << CR << " 이름 검색\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
-        if (c == 0) break;
+        if (c == 0 || c == BACK) break;
         if (c == 1) {
             string name = readLine("시료명: ");
             int stock   = readInt("초기 재고: ");
@@ -190,7 +195,7 @@ void App::runOrderMenu() {
         cout << "  " << CC << "6." << CR << " 전체 주문 목록\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
-        if (c == 0) break;
+        if (c == 0 || c == BACK) break;
 
         if (c == 1) {
             productManager_.listProducts();
@@ -243,7 +248,7 @@ void App::runMonitorMenu() {
         cout << "  " << CC << "2." << CR << " 시료별 재고 현황\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
-        if (c == 0) break;
+        if (c == 0 || c == BACK) break;
         if (c == 1) monitor_.showOrderSummary();
         else if (c == 2) monitor_.showInventoryStatus();
         readLine("");
@@ -258,7 +263,7 @@ void App::runReleaseMenu() {
         cout << "  " << CC << "1." << CR << " CONFIRMED 주문 출고 (재고 차감)\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
-        if (c == 0) break;
+        if (c == 0 || c == BACK) break;
         if (c == 1) {
             orderManager_.listOrdersByStatus(OrderStatus::CONFIRMED);
             int id = readInt("출고할 주문 ID: ");
@@ -280,7 +285,7 @@ void App::runProductionMenu() {
         cout << "  " << CC << "3." << CR << " 생산 완료  (PRODUCING → RELEASE)\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
-        if (c == 0) break;
+        if (c == 0 || c == BACK) break;
         if (c == 1) productionLine_.showStatus();
         else if (c == 2)
             cout << (productionLine_.startNext()
@@ -298,7 +303,8 @@ void App::runProductionMenu() {
 int App::readInt(const string& prompt) {
     cout << prompt;
     string line;
-    if (!getline(cin, line)) return -1;
+    if (!getline(cin, line)) return BACK;
+    if (line.empty()) return BACK;          // 빈 입력 → 이전 화면
     try { return stoi(line); }
     catch (...) { return -1; }
 }
