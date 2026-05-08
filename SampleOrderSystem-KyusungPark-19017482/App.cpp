@@ -157,6 +157,7 @@ void App::runProductMenu() {
         cout << "  " << CC << "2." << CR << " 목록 조회\n";
         cout << "  " << CC << "3." << CR << " 이름 검색\n";
         cout << "  " << CC << "4." << CR << " 시료 수정\n";
+        cout << "  " << CC << "5." << CR << " 시료 삭제\n";
         cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
@@ -233,6 +234,23 @@ void App::runProductMenu() {
                     cout << CG << "  수정 완료." << CR << "\n";
                 else
                     cout << CRD << "  수정 실패." << CR << "\n";
+            }
+        } else if (c == 5) {
+            productManager_.listProducts(true);
+            int id = readInt("삭제할 시료 ID: ");
+            if (id == BACK) { readLine(""); continue; }
+            const Product* target = productManager_.findById(id);
+            if (!target) {
+                cout << CRD << "  해당 ID의 시료가 없습니다." << CR << "\n";
+            } else {
+                cout << "  " << target->toString() << "\n";
+                string confirm = readLine(string(CRD) + "  정말 삭제하시겠습니까? (y/N): " + CR);
+                if (confirm == "y" || confirm == "Y") {
+                    productManager_.deleteProduct(id);
+                    cout << CG << "  삭제 완료." << CR << "\n";
+                } else {
+                    cout << CGR << "  취소되었습니다." << CR << "\n";
+                }
             }
         }
         readLine("");

@@ -64,6 +64,14 @@ bool ProductManager::updateProduct(int id, const string& name, int stock,
     return true;
 }
 
+bool ProductManager::deleteProduct(int id) {
+    auto it = find_if(products_.begin(), products_.end(),
+                      [id](const Product& p) { return p.getId() == id; });
+    if (it == products_.end()) return false;
+    products_.erase(it);
+    return true;
+}
+
 bool ProductManager::updateStock(int id, int delta) {
     Product* p = findById(id);
     if (!p) return false;

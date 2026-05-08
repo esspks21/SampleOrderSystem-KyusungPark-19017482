@@ -13,6 +13,7 @@ public:
     bool updateStock(int id, int delta);
     bool updateProduct(int id, const string& name, int stock,
                        double avgProductionTime, double yieldRate);
+    bool deleteProduct(int id);
     Product* findById(int id);
     const Product* findById(int id) const;
     const vector<Product>& getAll() const;
