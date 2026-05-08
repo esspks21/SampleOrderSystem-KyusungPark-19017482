@@ -74,31 +74,28 @@ PENDING
 
 **Visual Studio에서 열기 (권장)**
 1. `SampleOrderSystem-KyusungPark-19017482.slnx` 파일을 Visual Studio 2022로 엽니다.
-2. 상단 메뉴 → **빌드 → 솔루션 다시 빌드** (단축키: `Ctrl + Alt + F7`)
-3. 빌드 구성: `Debug | x64` (기본값)
+2. 빌드 구성을 `Release | x64`로 설정합니다.
+3. 상단 메뉴 → **빌드 → 솔루션 다시 빌드** (단축키: `Ctrl + Alt + F7`)
 
-**MSBuild 전체 재빌드 명령어**
+**MSBuild 명령어**
 ```
-msbuild SampleOrderSystem-KyusungPark-19017482.slnx /t:Rebuild /p:Configuration=Debug /p:Platform=x64 /v:minimal
+msbuild SampleOrderSystem-KyusungPark-19017482.slnx /t:Rebuild /p:Configuration=Release /p:Platform=x64 /v:minimal
 ```
 
-빌드 출력 위치: `x64\Debug\SampleOrderSystem-KyusungPark-19017482.exe`
+빌드 출력 위치: `x64\Release\SampleOrderSystem-KyusungPark-19017482.exe`
 
 ---
 
 ## 실행 방법
 
-**Visual Studio에서 실행 (권장)**
-- `F5` (디버그 실행) 또는 `Ctrl+F5` (디버그 없이 실행)
+**Visual Studio에서 실행**
+- `Ctrl+F5` (실행)
 - 작업 디렉터리가 솔루션 루트로 자동 설정되어 `Database/` 폴더를 정상 인식
 
 **직접 실행**
 ```
-cd C:\...\SampleOrderSystem-KyusungPark-19017482   ← 솔루션 루트로 이동 (필수)
-x64\Debug\SampleOrderSystem-KyusungPark-19017482.exe
+x64\Release\SampleOrderSystem-KyusungPark-19017482.exe
 ```
-
-> **주의**: 반드시 솔루션 루트(`.slnx` 파일이 있는 폴더)에서 실행해야 `Database/` 경로가 정상 인식됩니다.
 
 > **데이터 영속성**: 프로그램 종료(메뉴 `0`) 시 자동 저장되며, 재실행 시 이전 데이터가 그대로 복원됩니다.
 
@@ -124,7 +121,7 @@ SampleOrderSystem-KyusungPark-19017482/          ← 솔루션 루트 (실행 �
 │   ├── products.json                             ← 시료 목록
 │   ├── orders.json                               ← 주문 목록
 │   └── production.json                           ← 생산 라인 상태
-├── x64/Debug/                                    ← 빌드 출력
+├── x64/Release/                                  ← 빌드 출력
 │   └── SampleOrderSystem-KyusungPark-19017482.exe
 ├── RegressionTest/                               ← 회귀 테스트
 │   └── TCDataGenerator/TCDataGenerator.cpp
