@@ -68,3 +68,8 @@ void ProductionLine::showStatus() const {
                   << (o ? o->toString() : "ID:" + to_string(id)) << "\n";
     }
 }
+
+void ProductionLine::clearAll() {
+    waitingQueue_ = queue<int>{};
+    producingOrderId_.reset();
+}

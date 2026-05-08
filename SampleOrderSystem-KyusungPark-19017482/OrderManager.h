@@ -23,9 +23,11 @@ public:
     int  countByStatus(OrderStatus status) const;
 
     void restoreOrder(int id, const string& customerName,
-                      int productId, int quantity, OrderStatus status);
+                      int productId, int quantity, OrderStatus status,
+                      time_t createdAt = 0);
     void setNextId(int id);
     int  getNextId() const;
+    void clearAll();
 
 private:
     vector<Order> orders_;

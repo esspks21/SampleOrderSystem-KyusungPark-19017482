@@ -17,6 +17,7 @@ public:
     void restoreProduct(int id, const string& name, int stock);
     void setNextId(int id);
     int  getNextId() const;
+    void clearAll();
 
 private:
     vector<Product> products_;

@@ -74,3 +74,8 @@ void ProductManager::restoreProduct(int id, const string& name, int stock) {
 
 void ProductManager::setNextId(int id) { nextId_ = id; }
 int  ProductManager::getNextId() const { return nextId_; }
+
+void ProductManager::clearAll() {
+    products_.clear();
+    nextId_ = 1;
+}

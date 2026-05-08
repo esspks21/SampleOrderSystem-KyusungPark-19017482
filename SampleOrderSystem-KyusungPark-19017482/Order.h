@@ -1,5 +1,6 @@
-﻿#pragma once
+#pragma once
 #include <string>
+#include <ctime>
 #include "OrderStatus.h"
 using namespace std;
 
@@ -12,8 +13,13 @@ public:
     int getProductId() const;
     int getQuantity() const;
     OrderStatus getStatus() const;
+    time_t getCreatedAt() const;
+
     void setStatus(OrderStatus status);
+    void setCreatedAt(time_t t);
+
     string toString() const;
+    string getCreatedAtStr() const;
 
 private:
     int id_;
@@ -21,4 +27,5 @@ private:
     int productId_;
     int quantity_;
     OrderStatus status_;
+    time_t createdAt_;
 };

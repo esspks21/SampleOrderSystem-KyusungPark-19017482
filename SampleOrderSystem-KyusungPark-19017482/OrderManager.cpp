@@ -93,11 +93,18 @@ bool OrderManager::rejectOrder(int orderId) {
 }
 
 void OrderManager::restoreOrder(int id, const string& customerName,
-                                int productId, int quantity, OrderStatus status) {
+                                int productId, int quantity,
+                                OrderStatus status, time_t createdAt) {
     Order o(id, customerName, productId, quantity);
     o.setStatus(status);
+    if (createdAt != 0) o.setCreatedAt(createdAt);
     orders_.push_back(move(o));
 }
 
 void OrderManager::setNextId(int id) { nextId_ = id; }
 int  OrderManager::getNextId() const { return nextId_; }
+
+void OrderManager::clearAll() {
+    orders_.clear();
+    nextId_ = 1;
+}

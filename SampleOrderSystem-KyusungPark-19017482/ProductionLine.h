@@ -17,6 +17,7 @@ public:
     const queue<int>& getWaitingQueue() const;
 
     void setProducingOrderId(optional<int> id);
+    void clearAll();
 
 private:
     queue<int>    waitingQueue_;
