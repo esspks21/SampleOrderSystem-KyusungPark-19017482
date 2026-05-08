@@ -30,7 +30,8 @@ void FileRepository::saveProducts() const {
     ofstream f(kProductsFile);
     f << productManager_.getNextId() << "\n";
     for (const auto& p : productManager_.getAll())
-        f << p.getId() << "," << p.getName() << "," << p.getStock() << "\n";
+        f << p.getId() << "," << p.getName() << "," << p.getStock()
+          << "," << p.getAvgProductionTime() << "," << p.getYieldRate() << "\n";
 }
 
 void FileRepository::saveOrders() const {
@@ -66,8 +67,10 @@ void FileRepository::loadProducts() {
         char comma;
         if (!(ss >> id >> comma)) continue;
         getline(ss, name, ',');
+        double avgProdTime = 0.0, yieldRate = 0.0;
         if (!(ss >> stock)) continue;
-        productManager_.restoreProduct(id, name, stock);
+        ss >> comma >> avgProdTime >> comma >> yieldRate;
+        productManager_.restoreProduct(id, name, stock, avgProdTime, yieldRate);
     }
 }
 
