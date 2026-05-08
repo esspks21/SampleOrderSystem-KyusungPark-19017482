@@ -72,47 +72,65 @@ PENDING
 
 ## 빌드 방법
 
-**Visual Studio에서 열기**
-1. `SampleOrderSystem-KyusungPark-19017482.slnx` 파일을 Visual Studio로 엽니다.
-2. 상단 메뉴 → **빌드 → 솔루션 빌드** (단축키: `Ctrl + Shift + B`)
+**Visual Studio에서 열기 (권장)**
+1. `SampleOrderSystem-KyusungPark-19017482.slnx` 파일을 Visual Studio 2022로 엽니다.
+2. 상단 메뉴 → **빌드 → 솔루션 다시 빌드** (단축키: `Ctrl + Alt + F7`)
+3. 빌드 구성: `Debug | x64` (기본값)
 
-**MSBuild 명령어**
+**MSBuild 전체 재빌드 명령어**
 ```
-msbuild SampleOrderSystem-KyusungPark-19017482.slnx /p:Configuration=Debug /p:Platform=x64
+msbuild SampleOrderSystem-KyusungPark-19017482.slnx /t:Rebuild /p:Configuration=Debug /p:Platform=x64 /v:minimal
 ```
+
+빌드 출력 위치: `x64\Debug\SampleOrderSystem-KyusungPark-19017482.exe`
 
 ---
 
 ## 실행 방법
 
-빌드 후 생성된 실행 파일을 실행합니다.
+**Visual Studio에서 실행 (권장)**
+- `F5` (디버그 실행) 또는 `Ctrl+F5` (디버그 없이 실행)
+- 작업 디렉터리가 솔루션 루트로 자동 설정되어 `Database/` 폴더를 정상 인식
 
+**직접 실행**
 ```
+cd C:\...\SampleOrderSystem-KyusungPark-19017482   ← 솔루션 루트로 이동 (필수)
 x64\Debug\SampleOrderSystem-KyusungPark-19017482.exe
 ```
 
-> **데이터 영속성**: 프로그램을 종료하고 다시 실행해도 시료·주문·생산 데이터가 그대로 유지됩니다.
+> **주의**: 반드시 솔루션 루트(`.slnx` 파일이 있는 폴더)에서 실행해야 `Database/` 경로가 정상 인식됩니다.
+
+> **데이터 영속성**: 프로그램 종료(메뉴 `0`) 시 자동 저장되며, 재실행 시 이전 데이터가 그대로 복원됩니다.
 
 ---
 
 ## 프로젝트 구조
 
 ```
-SampleOrderSystem-KyusungPark-19017482/
-├── SampleOrderSystem-KyusungPark-19017482/   ← 소스 코드
-│   ├── main.cpp                              ← 진입점
-│   ├── App.h / App.cpp                       ← 메인 메뉴 및 루프
-│   ├── Product.h / Product.cpp               ← 시료 데이터 모델
-│   ├── Order.h / Order.cpp                   ← 주문 데이터 모델
-│   ├── OrderStatus.h                         ← 주문 상태 enum
-│   ├── ProductManager.h / ProductManager.cpp ← 시료 관리 비즈니스 로직
-│   ├── OrderManager.h / OrderManager.cpp     ← 주문 관리 비즈니스 로직
-│   ├── ProductionLine.h / ProductionLine.cpp ← 생산 라인 (FIFO 큐)
-│   ├── Monitor.h / Monitor.cpp               ← 모니터링 대시보드
-│   └── FileRepository.h / FileRepository.cpp ← 데이터 파일 저장·로드
+SampleOrderSystem-KyusungPark-19017482/          ← 솔루션 루트 (실행 기준 디렉터리)
+├── SampleOrderSystem-KyusungPark-19017482/       ← 소스 코드
+│   ├── main.cpp                                  ← 진입점
+│   ├── App.h / App.cpp                           ← 메인 메뉴 및 루프
+│   ├── Product.h / Product.cpp                   ← 시료 데이터 모델
+│   ├── Order.h / Order.cpp                       ← 주문 데이터 모델
+│   ├── OrderStatus.h                             ← 주문 상태 enum
+│   ├── ProductManager.h / ProductManager.cpp     ← 시료 관리 비즈니스 로직
+│   ├── OrderManager.h / OrderManager.cpp         ← 주문 관리 비즈니스 로직
+│   ├── ProductionLine.h / ProductionLine.cpp     ← 생산 라인 (FIFO 큐)
+│   ├── Monitor.h / Monitor.cpp                   ← 모니터링 대시보드
+│   ├── JsonRepository.h / JsonRepository.cpp     ← JSON 기반 데이터 영속성
+│   └── PasswordGuard.h                           ← 비밀번호 보호
+├── Database/                                     ← 런타임 데이터 (로컬 전용, git 제외)
+│   ├── products.json                             ← 시료 목록
+│   ├── orders.json                               ← 주문 목록
+│   └── production.json                           ← 생산 라인 상태
+├── x64/Debug/                                    ← 빌드 출력
+│   └── SampleOrderSystem-KyusungPark-19017482.exe
+├── RegressionTest/                               ← 회귀 테스트
+│   └── TCDataGenerator/TCDataGenerator.cpp
 ├── docs/
-│   ├── PRD.md                                ← 요구사항 문서 인덱스
-│   └── PRD_*.md                              ← 기능별 상세 요구사항
+│   ├── PRD.md                                    ← 요구사항 문서 인덱스
+│   └── PRD_*.md                                  ← 기능별 상세 요구사항
 └── README.md
 ```
 
