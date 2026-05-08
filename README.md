@@ -144,7 +144,7 @@ SampleOrderSystem-KyusungPark-19017482/          ← 솔루션 루트 (실행 �
 
 - **언어**: C++20
 - **플랫폼**: Windows Console Application
-- **빌드**: MSBuild (Visual Studio 2019/2022, 툴셋 v145)
+- **빌드**: MSBuild (Visual Studio 2022, 툴셋 v145, Release | x64)
 - **외부 라이브러리**: 없음 (STL만 사용)
 
 ---
