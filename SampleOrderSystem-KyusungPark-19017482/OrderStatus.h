@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+using namespace std;
 
 enum class OrderStatus {
     RESERVED,   // 고객 예약, 접수 대기
@@ -11,7 +12,7 @@ enum class OrderStatus {
     CANCELLED   // 주문 취소
 };
 
-inline std::string statusToString(OrderStatus status) {
+inline string statusToString(OrderStatus status) {
     switch (status) {
     case OrderStatus::RESERVED:  return "RESERVED";
     case OrderStatus::PENDING:   return "PENDING";

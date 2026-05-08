@@ -2,6 +2,7 @@
 #include "ProductManager.h"
 #include "OrderManager.h"
 #include "ProductionLine.h"
+using namespace std;
 
 class FileRepository {
 public:

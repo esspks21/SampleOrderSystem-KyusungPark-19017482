@@ -4,6 +4,7 @@
 #include "ProductionLine.h"
 #include "Monitor.h"
 #include "FileRepository.h"
+using namespace std;
 
 class App {
 public:
@@ -27,6 +28,6 @@ private:
     void runReleaseMenu();
     void runProductionMenu();
 
-    static int         readInt(const std::string& prompt);
-    static std::string readLine(const std::string& prompt);
+    static int         readInt(const string& prompt);
+    static string readLine(const string& prompt);
 };

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ProductManager.h"
 #include "OrderManager.h"
+using namespace std;
 
 class Monitor {
 public:

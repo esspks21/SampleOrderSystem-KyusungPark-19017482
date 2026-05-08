@@ -2,6 +2,7 @@
 #include <queue>
 #include <optional>
 #include "OrderManager.h"
+using namespace std;
 
 class ProductionLine {
 public:
@@ -12,13 +13,13 @@ public:
     bool completeProducing();
     void showStatus() const;
     bool isProducing() const;
-    std::optional<int> getProducingOrderId() const;
-    const std::queue<int>& getWaitingQueue() const;
+    optional<int> getProducingOrderId() const;
+    const queue<int>& getWaitingQueue() const;
 
-    void setProducingOrderId(std::optional<int> id);
+    void setProducingOrderId(optional<int> id);
 
 private:
-    std::queue<int>    waitingQueue_;
-    std::optional<int> producingOrderId_;
+    queue<int>    waitingQueue_;
+    optional<int> producingOrderId_;
     OrderManager&      orderManager_;
 };
