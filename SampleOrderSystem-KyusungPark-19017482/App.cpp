@@ -160,9 +160,22 @@ void App::runProductMenu() {
         int c = readInt("선택 > ");
         if (c == 0 || c == BACK) break;
         if (c == 1) {
-            string name = readLine("시료명: ");
-            int stock   = readInt("초기 재고: ");
-            productManager_.addProduct(name, stock < 0 ? 0 : stock);
+            string name  = readLine("시료명: ");
+            int    stock = readInt("초기 재고: ");
+            int    ptime = readInt("생산시간 (분): ");
+            // 수율: 소수점 입력 허용
+            cout << "수율 (%, 예: 95.5): ";
+            double yield = 0.0;
+            string yline;
+            if (getline(cin, yline) && !yline.empty()) {
+                try { yield = stod(yline); } catch (...) {}
+            }
+            if (yield < 0.0) yield = 0.0;
+            if (yield > 100.0) yield = 100.0;
+            productManager_.addProduct(name,
+                                       stock < 0 ? 0 : stock,
+                                       ptime < 0 ? 0 : ptime,
+                                       yield);
             cout << CG << "등록 완료." << CR << "\n";
         } else if (c == 2) {
             cout << "  " << CC << "1." << CR << " 오름차순 (ID 기준)\n";

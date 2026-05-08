@@ -133,13 +133,16 @@ void JsonRepository::ensureDir() const {
 
 void JsonRepository::saveProducts() const {
     ofstream f(F_PROD);
+    f << fixed;
     f << "{\"nextId\":" << pm_.getNextId() << ",\"items\":[\n";
     const auto& items = pm_.getAll();
     for (size_t i = 0; i < items.size(); i++) {
         const auto& p = items[i];
         f << "{\"id\":" << p.getId()
           << ",\"name\":\"" << jEsc(p.getName()) << "\""
-          << ",\"stock\":" << p.getStock() << "}";
+          << ",\"stock\":" << p.getStock()
+          << ",\"productionTime\":" << p.getProductionTime()
+          << ",\"yieldRate\":" << p.getYieldRate() << "}";
         if (i + 1 < items.size()) f << ",";
         f << "\n";
     }
@@ -195,10 +198,19 @@ void JsonRepository::loadProducts() {
     if (nextId > 0) pm_.setNextId(static_cast<int>(nextId));
 
     for (const auto& obj : jObjects(json, "items")) {
-        int    id    = static_cast<int>(jInt(obj, "id"));
-        string name  = jStr(obj, "name");
-        int    stock = static_cast<int>(jInt(obj, "stock"));
-        if (id > 0) pm_.restoreProduct(id, name, stock);
+        int    id             = static_cast<int>(jInt(obj, "id"));
+        string name           = jStr(obj, "name");
+        int    stock          = static_cast<int>(jInt(obj, "stock"));
+        int    productionTime = static_cast<int>(jInt(obj, "productionTime"));
+        // yieldRate는 소수점 포함이므로 별도 파싱
+        double yieldRate      = 0.0;
+        const string yrKey    = "\"yieldRate\":";
+        auto yrPos = obj.find(yrKey);
+        if (yrPos != string::npos) {
+            try { yieldRate = stod(obj.substr(yrPos + yrKey.size())); }
+            catch (...) {}
+        }
+        if (id > 0) pm_.restoreProduct(id, name, stock, productionTime, yieldRate);
     }
 }
 
