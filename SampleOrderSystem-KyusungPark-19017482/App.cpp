@@ -178,16 +178,10 @@ void App::runProductMenu() {
                                        yield);
             cout << CG << "등록 완료." << CR << "\n";
         } else if (c == 2) {
-            cout << "  " << CC << "1." << CR << " 오름차순 (ID 기준)\n";
-            cout << "  " << CC << "2." << CR << " 내림차순 (ID 기준)\n";
-            bool asc = (readInt("정렬 선택 > ") != 2);
-            productManager_.listProducts(asc);
+            productManager_.listProducts(true);
         } else if (c == 3) {
             string kw = readLine("검색어 (ID 또는 이름, 대소문자 무시): ");
-            cout << "  " << CC << "1." << CR << " 오름차순 (ID 기준)\n";
-            cout << "  " << CC << "2." << CR << " 내림차순 (ID 기준)\n";
-            bool asc = (readInt("정렬 선택 > ") != 2);
-            auto res = productManager_.search(kw, asc);
+            auto res = productManager_.search(kw, true);
             if (res.empty()) cout << CRD << "  검색 결과 없음." << CR << "\n";
             else for (const auto& p : res) cout << "  " << p.toString() << "\n";
         }
