@@ -21,10 +21,10 @@ void Product::setYieldRate(double rate)            { yieldRate_ = rate; }
 string Product::toString() const {
     ostringstream oss;
     oss << fixed << setprecision(1);
-    oss << "[ID:" << setw(3) << id_ << "]"
-        << "  " << left << setw(20) << name_ << right
-        << "  평균생산: " << setw(7) << avgProductionTime_ << " min/ea"
-        << "  수율: " << setw(5) << yieldRate_ << "%"
-        << "  현재재고: " << setw(5) << stock_ << " ea";
+    oss << left  << setw(6)  << id_
+        << "\t"  << setw(28) << name_
+        << "\t"  << right << setw(10) << avgProductionTime_
+        << "\t"  << setw(8)  << yieldRate_
+        << "\t"  << setw(6)  << stock_;
     return oss.str();
 }

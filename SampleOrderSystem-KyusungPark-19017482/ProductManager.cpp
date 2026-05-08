@@ -1,5 +1,6 @@
 ﻿#include "ProductManager.h"
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <cctype>
 using namespace std;
@@ -18,6 +19,16 @@ void ProductManager::addProduct(const string& name, int stock,
     products_.emplace_back(nextId_++, name, stock, avgProductionTime, yieldRate);
 }
 
+static void printProductHeader() {
+    cout << "  "
+         << left  << setw(6)  << "ID"
+         << "\t" << setw(28) << "시료명"
+         << "\t" << setw(16) << "평균생산(min)"
+         << "\t" << setw(10) << "수율(%)"
+         << "\t" << "재고(ea)" << "\n";
+    cout << "  " << string(75, '-') << "\n";
+}
+
 void ProductManager::listProducts(bool ascending) const {
     if (products_.empty()) {
         cout << "  등록된 시료가 없습니다.\n";
@@ -27,8 +38,11 @@ void ProductManager::listProducts(bool ascending) const {
     sort(sorted.begin(), sorted.end(), [ascending](const Product& a, const Product& b) {
         return ascending ? a.getId() < b.getId() : a.getId() > b.getId();
     });
+    printProductHeader();
     for (const auto& p : sorted)
         cout << "  " << p.toString() << "\n";
+    cout << "  " << string(75, '-') << "\n";
+    cout << "  총 " << sorted.size() << "개\n";
 }
 
 vector<Product> ProductManager::search(const string& keyword, bool ascending) const {

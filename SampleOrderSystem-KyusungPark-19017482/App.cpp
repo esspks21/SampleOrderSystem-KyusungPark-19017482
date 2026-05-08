@@ -173,8 +173,19 @@ void App::runProductMenu() {
         } else if (c == 3) {
             string kw = readLine("검색어 (ID 또는 이름, 대소문자 무시): ");
             auto res = productManager_.search(kw, true);
-            if (res.empty()) cout << CRD << "  검색 결과 없음." << CR << "\n";
-            else for (const auto& p : res) cout << "  " << p.toString() << "\n";
+            if (res.empty()) {
+                cout << CRD << "  검색 결과 없음." << CR << "\n";
+            } else {
+                cout << "  " << left << setw(6) << "ID"
+                     << "\t" << setw(28) << "시료명"
+                     << "\t" << setw(16) << "평균생산(min)"
+                     << "\t" << setw(10) << "수율(%)"
+                     << "\t" << "재고(ea)" << "\n";
+                cout << "  " << string(75, '-') << "\n";
+                for (const auto& p : res) cout << "  " << p.toString() << "\n";
+                cout << "  " << string(75, '-') << "\n";
+                cout << "  총 " << res.size() << "개\n";
+            }
         } else if (c == 4) {
             productManager_.listProducts(true);
             int id = readInt("수정할 시료 ID: ");
