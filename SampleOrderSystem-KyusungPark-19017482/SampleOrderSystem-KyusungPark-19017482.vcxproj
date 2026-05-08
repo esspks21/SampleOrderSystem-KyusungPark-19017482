@@ -140,6 +140,7 @@
     <ClCompile Include="ProductionLine.cpp" />
     <ClCompile Include="Monitor.cpp" />
     <ClCompile Include="FileRepository.cpp" />
+    <ClCompile Include="App.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OrderStatus.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="ProductionLine.h" />
     <ClInclude Include="Monitor.h" />
     <ClInclude Include="FileRepository.h" />
+    <ClInclude Include="App.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CLAUDE.md" />
