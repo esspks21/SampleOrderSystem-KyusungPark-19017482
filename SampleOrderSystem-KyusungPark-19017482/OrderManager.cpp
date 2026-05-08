@@ -67,6 +67,16 @@ int OrderManager::countByStatus(OrderStatus status) const {
     return count;
 }
 
+bool OrderManager::releaseOrder(int orderId, ProductManager& pm) {
+    Order* o = findById(orderId);
+    if (!o || o->getStatus() != OrderStatus::CONFIRMED) return false;
+    const Product* p = pm.findById(o->getProductId());
+    if (!p || p->getStock() < o->getQuantity()) return false;
+    pm.updateStock(o->getProductId(), -o->getQuantity());
+    o->setStatus(OrderStatus::RELEASE);
+    return true;
+}
+
 bool OrderManager::approveOrder(int orderId) {
     Order* o = findById(orderId);
     if (!o || o->getStatus() != OrderStatus::PENDING) return false;

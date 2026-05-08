@@ -16,6 +16,9 @@ public:
     bool approveOrder(int orderId);
     bool rejectOrder(int orderId);
 
+    // Phase 6
+    bool releaseOrder(int orderId, ProductManager& pm);
+
     void listOrders() const;
     void listOrdersByStatus(OrderStatus status) const;
     Order* findById(int id);
