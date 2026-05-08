@@ -43,12 +43,12 @@ App::App()
     : orderManager_(productManager_),
       productionLine_(orderManager_, productManager_),
       monitor_(productManager_, orderManager_),
-      jsonRepository_(productManager_, orderManager_, productionLine_)
+      fileRepository_(productManager_, orderManager_, productionLine_)
 {
-    jsonRepository_.load();
+    fileRepository_.load();
     int completed = orderManager_.syncProduction();
     if (completed > 0) {
-        jsonRepository_.save();
+        fileRepository_.save();
         cout << CG << "[시스템] 오프라인 중 완료된 생산 " << completed << "건을 반영했습니다." << CR << "\n";
     }
 }
@@ -74,7 +74,7 @@ void App::run() {
         case 5: runProductionMenu(); break;
         case 9: runResetMenu();      break;
         case 0:
-            jsonRepository_.save();
+            fileRepository_.save();
             cout << CG << "저장 완료. 시스템을 종료합니다." << CR << "\n";
             return;
         default:
@@ -405,7 +405,7 @@ void App::runProductionMenu() {
         if (c == 1) {
             int synced = orderManager_.syncProduction();
             if (synced > 0) {
-                jsonRepository_.save();
+                fileRepository_.save();
                 cout << CG << "생산 완료 " << synced << "건 반영됨.\n" << CR;
             }
             productionLine_.showStatus();
@@ -476,7 +476,7 @@ void App::runResetMenu() {
         return;
     }
 
-    jsonRepository_.clearAll();
+    fileRepository_.clearAll();
     cout << "\n" << CG << BOLD << "  ✓ 모든 데이터가 초기화되었습니다." << CR << "\n";
     readLine("");
 }

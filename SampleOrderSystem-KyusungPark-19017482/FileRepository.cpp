@@ -1,107 +1,143 @@
-﻿#include "FileRepository.h"
+#include "FileRepository.h"
 #include <fstream>
 #include <sstream>
-#include <iostream>
+#include <iomanip>
 #include <filesystem>
+#include <windows.h>
 using namespace std;
 
-FileRepository::FileRepository(ProductManager& pm, OrderManager& om, ProductionLine& pl)
-    : productManager_(pm), orderManager_(om), productionLine_(pl) {}
-
-void FileRepository::ensureDataDir() const {
-    filesystem::create_directories(kDatabaseDir);
+// exe 위치에서 위로 탐색해 Database/ 폴더 루트를 반환
+static filesystem::path resolveDbRoot() {
+    char buf[MAX_PATH];
+    GetModuleFileNameA(nullptr, buf, MAX_PATH);
+    auto dir = filesystem::path(buf).parent_path();
+    for (int i = 0; i < 6; ++i) {
+        if (filesystem::exists(dir / "Database"))
+            return dir;
+        auto parent = dir.parent_path();
+        if (parent == dir) break;
+        dir = parent;
+    }
+    return filesystem::current_path();
 }
 
+FileRepository::FileRepository(ProductManager& pm, OrderManager& om, ProductionLine& pl)
+    : pm_(pm), om_(om), pl_(pl)
+{
+    auto root = resolveDbRoot();
+    dbDir_ = (root / "Database").string();
+    fProd_ = (root / "Database" / "products.csv").string();
+    fOrd_  = (root / "Database" / "orders.csv").string();
+}
+
+void FileRepository::ensureDir() const {
+    filesystem::create_directories(dbDir_);
+}
+
+// ── 저장 ──────────────────────────────────────────────────
+
 void FileRepository::save() const {
-    ensureDataDir();
+    ensureDir();
     saveProducts();
     saveOrders();
-    saveProduction();
+}
+
+void FileRepository::saveProducts() const {
+    ofstream f(fProd_);
+    f << pm_.getNextId() << "\n";
+    f << fixed << setprecision(1);
+    for (const auto& p : pm_.getAll())
+        f << p.getId() << ","
+          << p.getName() << ","
+          << p.getStock() << ","
+          << p.getAvgProductionTime() << ","
+          << p.getYieldRate() << "\n";
+}
+
+void FileRepository::saveOrders() const {
+    ofstream f(fOrd_);
+    f << om_.getNextId() << "\n";
+    for (const auto& o : om_.getAll())
+        f << o.getId() << ","
+          << o.getCustomerName() << ","
+          << o.getProductId() << ","
+          << o.getQuantity() << ","
+          << static_cast<int>(o.getStatus()) << ","
+          << static_cast<long long>(o.getCreatedAt()) << ","
+          << static_cast<long long>(o.getProducingStartedAt()) << ","
+          << o.getProducingActualQty() << "\n";
+}
+
+// ── 로드 ──────────────────────────────────────────────────
+
+static void stripCR(string& s) {
+    if (!s.empty() && s.back() == '\r') s.pop_back();
 }
 
 bool FileRepository::load() {
     loadProducts();
     loadOrders();
-    loadProduction();
     return true;
 }
 
-void FileRepository::saveProducts() const {
-    ofstream f(kProductsFile);
-    f << productManager_.getNextId() << "\n";
-    for (const auto& p : productManager_.getAll())
-        f << p.getId() << "," << p.getName() << "," << p.getStock()
-          << "," << p.getAvgProductionTime() << "," << p.getYieldRate() << "\n";
-}
-
-void FileRepository::saveOrders() const {
-    ofstream f(kOrdersFile);
-    f << orderManager_.getNextId() << "\n";
-    for (const auto& o : orderManager_.getAll())
-        f << o.getId() << "," << o.getCustomerName() << ","
-          << o.getProductId() << "," << o.getQuantity() << ","
-          << static_cast<int>(o.getStatus()) << "\n";
-}
-
-void FileRepository::saveProduction() const {
-    ofstream f(kProductionFile);
-    auto pid = productionLine_.getProducingOrderId();
-    f << (pid.has_value() ? *pid : -1) << "\n";
-    auto q = productionLine_.getWaitingQueue();
-    while (!q.empty()) { f << q.front() << "\n"; q.pop(); }
-}
-
 void FileRepository::loadProducts() {
-    ifstream f(kProductsFile);
+    ifstream f(fProd_);
     if (!f) return;
     int nextId;
     if (!(f >> nextId)) return;
     f.ignore();
-    productManager_.setNextId(nextId);
+    pm_.setNextId(nextId);
     string line;
     while (getline(f, line)) {
+        stripCR(line);
         if (line.empty()) continue;
         istringstream ss(line);
-        int id, stock;
-        string name;
-        char comma;
-        if (!(ss >> id >> comma)) continue;
+        int id, stock; string name; char c; double pt, yr;
+        if (!(ss >> id >> c)) continue;
         getline(ss, name, ',');
-        double avgProdTime = 0.0, yieldRate = 0.0;
-        if (!(ss >> stock)) continue;
-        ss >> comma >> avgProdTime >> comma >> yieldRate;
-        productManager_.restoreProduct(id, name, stock, avgProdTime, yieldRate);
+        if (!(ss >> stock >> c >> pt >> c >> yr)) continue;
+        pm_.restoreProduct(id, name, stock, pt, yr);
     }
 }
 
 void FileRepository::loadOrders() {
-    ifstream f(kOrdersFile);
+    ifstream f(fOrd_);
     if (!f) return;
     int nextId;
     if (!(f >> nextId)) return;
     f.ignore();
-    orderManager_.setNextId(nextId);
+    om_.setNextId(nextId);
     string line;
     while (getline(f, line)) {
+        stripCR(line);
         if (line.empty()) continue;
         istringstream ss(line);
-        int id, productId, quantity, statusInt;
-        string customerName;
-        char comma;
-        if (!(ss >> id >> comma)) continue;
-        getline(ss, customerName, ',');
-        if (!(ss >> productId >> comma >> quantity >> comma >> statusInt)) continue;
-        orderManager_.restoreOrder(id, customerName, productId, quantity,
-                                   static_cast<OrderStatus>(statusInt));
+        int id, productId, qty, statusInt, producingActualQty;
+        string customer; char c;
+        long long createdAt, producingStartedAt;
+        if (!(ss >> id >> c)) continue;
+        getline(ss, customer, ',');
+        if (!(ss >> productId >> c >> qty >> c >> statusInt >> c
+              >> createdAt >> c >> producingStartedAt >> c
+              >> producingActualQty)) continue;
+        om_.restoreOrder(id, customer, productId, qty,
+                         static_cast<OrderStatus>(statusInt),
+                         static_cast<time_t>(createdAt));
+        Order* o = om_.findById(id);
+        if (o) {
+            o->setProducingStartedAt(static_cast<time_t>(producingStartedAt));
+            o->setProducingActualQty(producingActualQty);
+        }
     }
 }
 
-void FileRepository::loadProduction() {
-    ifstream f(kProductionFile);
-    if (!f) return;
-    int pid;
-    if (!(f >> pid)) return;
-    if (pid != -1) productionLine_.setProducingOrderId(pid);
-    while (f >> pid)
-        if (pid >= 0) productionLine_.enqueue(pid);
+// ── 전체 초기화 ───────────────────────────────────────────
+
+void FileRepository::clearAll() {
+    pm_.clearAll();
+    om_.clearAll();
+    pl_.clearAll();
+    ensureDir();
+    saveProducts();
+    saveOrders();
 }

@@ -3,7 +3,7 @@
 #include "OrderManager.h"
 #include "ProductionLine.h"
 #include "Monitor.h"
-#include "JsonRepository.h"
+#include "FileRepository.h"
 #include "PasswordGuard.h"
 using namespace std;
 
@@ -17,7 +17,7 @@ private:
     OrderManager    orderManager_;
     ProductionLine  productionLine_;
     Monitor         monitor_;
-    JsonRepository  jsonRepository_;   // Database/*.json 영속성
+    FileRepository  fileRepository_;   // Database/*.csv 영속성
 
     void printHeader() const;
     void printSummary() const;
