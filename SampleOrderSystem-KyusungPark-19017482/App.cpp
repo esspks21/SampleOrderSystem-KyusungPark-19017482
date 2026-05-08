@@ -429,24 +429,36 @@ void App::runReleaseMenu() {
     }
 }
 
-// ── 생산 라인 ─────────────────────────────────────────────
+// ── 생산 라인 (실시간 자동 갱신) ─────────────────────────────
 void App::runProductionMenu() {
+    constexpr int REFRESH_INTERVAL_MS = 3000;
+    constexpr int POLL_STEP_MS        = 100;
+
     while (true) {
         clearScreen();
-        cout << CB << BOLD << "[ 생산 라인 ]" << CR << "\n\n";
-        cout << "  " << CC << "1." << CR << " 생산 현황 조회\n";
-        cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
-        int c = readInt("선택 > ");
-        if (c == 0 || c == BACK) break;
-        if (c == 1) {
-            int synced = orderManager_.syncProduction();
-            if (synced > 0) {
-                fileRepository_.save();
-                cout << CG << "생산 완료 " << synced << "건 반영됨.\n" << CR;
-            }
-            productionLine_.showStatus();
+
+        // 생산 완료 체크
+        int synced = orderManager_.syncProduction();
+        if (synced > 0) fileRepository_.save();
+
+        // 헤더
+        cout << "\033[38;2;20;40;160m\033[1m"
+             << "  ═══════════════════════════════════════════════════════════\n"
+             << "    생산 라인 현황  " << getCurrentTime();
+        if (synced > 0)
+            cout << "  \033[92m[생산 완료 " << synced << "건 반영]\033[0m";
+        cout << "\n\033[38;2;20;40;160m\033[1m"
+             << "  ═══════════════════════════════════════════════════════════\n"
+             << "\033[0m\n";
+
+        productionLine_.showStatus();
+
+        cout << "\n\033[90m  [ 3초마다 자동 갱신 | 아무 키: 돌아가기 ]\033[0m\n";
+
+        for (int elapsed = 0; elapsed < REFRESH_INTERVAL_MS; elapsed += POLL_STEP_MS) {
+            if (_kbhit()) { _getch(); return; }
+            Sleep(POLL_STEP_MS);
         }
-        readLine("");
     }
 }
 
