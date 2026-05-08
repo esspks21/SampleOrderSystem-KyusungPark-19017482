@@ -131,7 +131,18 @@
     </Link>
   </ItemDefinitionGroup>
 
-  <ItemGroup></ItemGroup>
+  <ItemGroup>
+    <None Include="..\CLAUDE.md" />
+    <None Include="..\PLAN.md" />
+    <None Include="..\docs\PRD.md" />
+    <None Include="..\docs\PRD_메인메뉴.md" />
+    <None Include="..\docs\PRD_시료관리.md" />
+    <None Include="..\docs\PRD_시료주문.md" />
+    <None Include="..\docs\PRD_주문승인거절.md" />
+    <None Include="..\docs\PRD_모니터링.md" />
+    <None Include="..\docs\PRD_생산라인.md" />
+    <None Include="..\docs\PRD_출고처리.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
