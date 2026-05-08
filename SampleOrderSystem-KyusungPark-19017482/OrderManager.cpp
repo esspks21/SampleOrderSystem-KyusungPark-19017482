@@ -78,11 +78,17 @@ bool OrderManager::releaseOrder(int orderId, ProductManager& pm) {
     return true;
 }
 
-bool OrderManager::approveOrder(int orderId) {
+optional<OrderStatus> OrderManager::approveOrder(int orderId) {
     Order* o = findById(orderId);
-    if (!o || o->getStatus() != OrderStatus::PENDING) return false;
-    o->setStatus(OrderStatus::CONFIRMED);
-    return true;
+    if (!o || o->getStatus() != OrderStatus::PENDING) return nullopt;
+
+    const Product* p = productManager_.findById(o->getProductId());
+    if (p && p->getStock() >= o->getQuantity()) {
+        o->setStatus(OrderStatus::CONFIRMED);
+        return OrderStatus::CONFIRMED;
+    }
+    o->setStatus(OrderStatus::PRODUCING);
+    return OrderStatus::PRODUCING;
 }
 
 bool OrderManager::rejectOrder(int orderId) {

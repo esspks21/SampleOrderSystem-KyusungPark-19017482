@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <vector>
+#include <optional>
 #include "Order.h"
 #include "ProductManager.h"
 using namespace std;
@@ -11,7 +12,7 @@ public:
     bool reserveOrder(const string& customerName, int productId, int quantity);
     bool acceptOrder(int orderId);
     bool cancelOrder(int orderId);
-    bool approveOrder(int orderId);
+    optional<OrderStatus> approveOrder(int orderId); // CONFIRMED(재고 충분) or PRODUCING(재고 부족)
     bool rejectOrder(int orderId);
     bool releaseOrder(int orderId, ProductManager& pm);
 

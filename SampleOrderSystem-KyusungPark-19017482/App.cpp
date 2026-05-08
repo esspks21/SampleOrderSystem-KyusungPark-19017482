@@ -299,7 +299,7 @@ void App::runOrderMenu() {
         cout << CB << BOLD << "[ 주문 관리 ]" << CR << "\n\n";
         cout << "  " << CC << "1." << CR << " 시료 예약       (→ RESERVED)\n";
         cout << "  " << CC << "2." << CR << " 주문 접수       (RESERVED → PENDING)\n";
-        cout << "  " << CC << "3." << CR << " 주문 승인       (PENDING → CONFIRMED)\n";
+        cout << "  " << CC << "3." << CR << " 주문 승인       (PENDING → CONFIRMED 또는 PRODUCING)\n";
         cout << "  " << CC << "4." << CR << " 주문 거절       (PENDING → REJECTED)\n";
         cout << "  " << CC << "5." << CR << " 주문 취소\n";
         cout << "  " << CC << "6." << CR << " 전체 주문 목록\n";
@@ -324,11 +324,14 @@ void App::runOrderMenu() {
         } else if (c == 3) {
             orderManager_.listOrdersByStatus(OrderStatus::PENDING);
             int id = readInt("승인할 주문 ID: ");
-            if (orderManager_.approveOrder(id)) {
-                productionLine_.enqueue(id);
-                cout << CG << "승인 완료. 생산 큐에 추가됨." << CR << "\n";
+            auto result = orderManager_.approveOrder(id);
+            if (!result) {
+                cout << CRD << "승인 실패 (PENDING 상태 주문만 승인 가능)." << CR << "\n";
+            } else if (*result == OrderStatus::CONFIRMED) {
+                cout << CG << "승인 완료. 재고 충분 → CONFIRMED (출고 대기)." << CR << "\n";
             } else {
-                cout << CRD << "승인 실패." << CR << "\n";
+                productionLine_.enqueue(id);
+                cout << CY << "승인 완료. 재고 부족 → 생산 라인 등록 (PRODUCING)." << CR << "\n";
             }
         } else if (c == 4) {
             orderManager_.listOrdersByStatus(OrderStatus::PENDING);
