@@ -12,6 +12,10 @@ public:
     bool acceptOrder(int orderId);
     bool cancelOrder(int orderId);
 
+    // Phase 4
+    bool approveOrder(int orderId);
+    bool rejectOrder(int orderId);
+
     void listOrders() const;
     void listOrdersByStatus(OrderStatus status) const;
     Order* findById(int id);

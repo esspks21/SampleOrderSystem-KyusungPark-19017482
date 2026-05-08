@@ -67,6 +67,20 @@ int OrderManager::countByStatus(OrderStatus status) const {
     return count;
 }
 
+bool OrderManager::approveOrder(int orderId) {
+    Order* o = findById(orderId);
+    if (!o || o->getStatus() != OrderStatus::PENDING) return false;
+    o->setStatus(OrderStatus::CONFIRMED);
+    return true;
+}
+
+bool OrderManager::rejectOrder(int orderId) {
+    Order* o = findById(orderId);
+    if (!o || o->getStatus() != OrderStatus::PENDING) return false;
+    o->setStatus(OrderStatus::REJECTED);
+    return true;
+}
+
 void OrderManager::restoreOrder(int id, const std::string& customerName,
                                 int productId, int quantity, OrderStatus status) {
     Order o(id, customerName, productId, quantity);
