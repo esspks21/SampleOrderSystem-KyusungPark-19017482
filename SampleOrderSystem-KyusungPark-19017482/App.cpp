@@ -4,7 +4,10 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <conio.h>      // _getch() — 비밀번호 입력 마스킹 (Windows)
+#include <conio.h>      // _getch(), _kbhit() — 키 입력 감지 (Windows)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>    // Sleep()
+#undef CY               // windows.h CY(CURRENCY) 타입과 색상 상수 충돌 방지
 using namespace std;
 
 // ── ANSI 색상 코드 + 입력 상수 ───────────────────────────────
@@ -357,19 +360,35 @@ void App::runOrderMenu() {
     }
 }
 
-// ── 모니터링 ──────────────────────────────────────────────
+// ── 모니터링 (실시간 자동 갱신) ──────────────────────────────
 void App::runMonitorMenu() {
+    constexpr int REFRESH_INTERVAL_MS = 3000;
+    constexpr int POLL_STEP_MS        = 100;
+
     while (true) {
         clearScreen();
-        cout << CB << BOLD << "[ 모니터링 ]" << CR << "\n\n";
-        cout << "  " << CC << "1." << CR << " 상태별 주문 현황\n";
-        cout << "  " << CC << "2." << CR << " 시료별 재고 현황\n";
-        cout << "  " << CGR << "0." << CR << " 돌아가기\n\n";
-        int c = readInt("선택 > ");
-        if (c == 0 || c == BACK) break;
-        if (c == 1) monitor_.showOrderSummary();
-        else if (c == 2) monitor_.showInventoryStatus();
-        readLine("");
+
+        // 생산 완료 체크 후 자동 반영
+        int synced = orderManager_.syncProduction();
+        if (synced > 0) fileRepository_.save();
+
+        // 헤더 + 대시보드
+        cout << "\033[38;2;20;40;160m" << "\033[1m"
+             << "  ═══════════════════════════════════════════════════════════\n"
+             << "    모니터링 대시보드  " << getCurrentTime() << "\n"
+             << "  ═══════════════════════════════════════════════════════════\n"
+             << "\033[0m\n";
+
+        monitor_.showDashboard();
+
+        cout << "\n\033[90m  [ " << REFRESH_INTERVAL_MS / 1000
+             << "초마다 자동 갱신 | 아무 키: 돌아가기 ]\033[0m\n";
+
+        // REFRESH_INTERVAL_MS 동안 키 입력 감시
+        for (int elapsed = 0; elapsed < REFRESH_INTERVAL_MS; elapsed += POLL_STEP_MS) {
+            if (_kbhit()) { _getch(); return; }
+            Sleep(POLL_STEP_MS);
+        }
     }
 }
 

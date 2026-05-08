@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ProductManager.h"
 #include "OrderManager.h"
 using namespace std;
@@ -6,12 +6,14 @@ using namespace std;
 class Monitor {
 public:
     Monitor(const ProductManager& pm, const OrderManager& om);
-    void showOrderSummary() const;
-    void showInventoryStatus() const;
+
+    void showDashboard() const;      // 주문 현황 + 재고 현황 통합 대시보드
 
 private:
-    const ProductManager& productManager_;
-    const OrderManager&   orderManager_;
+    const ProductManager& pm_;
+    const OrderManager&   om_;
 
-    int activeDemandForProduct(int productId) const;
+    void showOrderSection()     const;
+    void showInventorySection() const;
+    int  activeDemand(int productId) const;
 };
