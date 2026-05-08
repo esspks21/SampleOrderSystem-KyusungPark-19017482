@@ -4,7 +4,25 @@
 #include <iostream>
 #include <filesystem>
 #include <cctype>
+#include <windows.h>
 using namespace std;
+
+// exe 위치에서 위로 올라가며 Database/ 폴더가 있는 루트를 반환
+static filesystem::path resolveDbRoot() {
+    char buf[MAX_PATH];
+    GetModuleFileNameA(nullptr, buf, MAX_PATH);
+    auto dir = filesystem::path(buf).parent_path();
+
+    for (int i = 0; i < 6; ++i) {
+        if (filesystem::exists(dir / "Database"))
+            return dir;
+        auto parent = dir.parent_path();
+        if (parent == dir) break;
+        dir = parent;
+    }
+    // 못 찾으면 현재 작업 디렉터리 사용
+    return filesystem::current_path();
+}
 
 // ── 미니 JSON 유틸 (외부 라이브러리 없이 자체 구현) ─────────────
 
@@ -123,16 +141,23 @@ static string readFile(const string& path) {
 // ── JsonRepository ─────────────────────────────────────────
 
 JsonRepository::JsonRepository(ProductManager& pm, OrderManager& om, ProductionLine& pl)
-    : pm_(pm), om_(om), pl_(pl) {}
+    : pm_(pm), om_(om), pl_(pl)
+{
+    auto root = resolveDbRoot();
+    dbDir_ = (root / "Database").string();
+    fProd_ = (root / "Database" / "products.json").string();
+    fOrd_  = (root / "Database" / "orders.json").string();
+    fLine_ = (root / "Database" / "production.json").string();
+}
 
 void JsonRepository::ensureDir() const {
-    filesystem::create_directories(DB_DIR);
+    filesystem::create_directories(dbDir_);
 }
 
 // ── 저장 ───────────────────────────────────────────────────
 
 void JsonRepository::saveProducts() const {
-    ofstream f(F_PROD);
+    ofstream f(fProd_);
     f << fixed;
     f << "{\"nextId\":" << pm_.getNextId() << ",\"items\":[\n";
     const auto& items = pm_.getAll();
@@ -150,7 +175,7 @@ void JsonRepository::saveProducts() const {
 }
 
 void JsonRepository::saveOrders() const {
-    ofstream f(F_ORD);
+    ofstream f(fOrd_);
     f << "{\"nextId\":" << om_.getNextId() << ",\"items\":[\n";
     const auto& items = om_.getAll();
     for (size_t i = 0; i < items.size(); i++) {
@@ -168,7 +193,7 @@ void JsonRepository::saveOrders() const {
 }
 
 void JsonRepository::saveProduction() const {
-    ofstream f(F_LINE);
+    ofstream f(fLine_);
     auto pid = pl_.getProducingOrderId();
     f << "{\"producing\":" << (pid.has_value() ? *pid : -1) << ",\"queue\":[";
     auto q = pl_.getWaitingQueue();
@@ -191,7 +216,7 @@ void JsonRepository::save() const {
 // ── 로드 ───────────────────────────────────────────────────
 
 void JsonRepository::loadProducts() {
-    const string json = readFile(F_PROD);
+    const string json = readFile(fProd_);
     if (json.empty()) return;
 
     int64_t nextId = jInt(json, "nextId");
@@ -218,7 +243,7 @@ void JsonRepository::loadProducts() {
 }
 
 void JsonRepository::loadOrders() {
-    const string json = readFile(F_ORD);
+    const string json = readFile(fOrd_);
     if (json.empty()) return;
 
     int64_t nextId = jInt(json, "nextId");
@@ -240,7 +265,7 @@ void JsonRepository::loadOrders() {
 }
 
 void JsonRepository::loadProduction() {
-    const string json = readFile(F_LINE);
+    const string json = readFile(fLine_);
     if (json.empty()) return;
 
     int64_t pid = jInt(json, "producing");

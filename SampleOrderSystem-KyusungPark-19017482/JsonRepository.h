@@ -19,10 +19,10 @@ private:
     OrderManager&   om_;
     ProductionLine& pl_;
 
-    static constexpr const char* DB_DIR   = "Database";
-    static constexpr const char* F_PROD   = "Database/products.json";
-    static constexpr const char* F_ORD    = "Database/orders.json";
-    static constexpr const char* F_LINE   = "Database/production.json";
+    string dbDir_;
+    string fProd_;
+    string fOrd_;
+    string fLine_;
 
     void ensureDir() const;
     void saveProducts()   const;
