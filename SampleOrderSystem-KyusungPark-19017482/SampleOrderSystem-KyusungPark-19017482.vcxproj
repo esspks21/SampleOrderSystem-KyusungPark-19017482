@@ -139,6 +139,7 @@
     <ClCompile Include="OrderManager.cpp" />
     <ClCompile Include="ProductionLine.cpp" />
     <ClCompile Include="Monitor.cpp" />
+    <ClCompile Include="FileRepository.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OrderStatus.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="OrderManager.h" />
     <ClInclude Include="ProductionLine.h" />
     <ClInclude Include="Monitor.h" />
+    <ClInclude Include="FileRepository.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CLAUDE.md" />
