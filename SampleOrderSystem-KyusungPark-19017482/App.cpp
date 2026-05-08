@@ -41,12 +41,31 @@ void App::clearScreen() {
     system("cls");
 }
 
+// ── 강제 저장 ─────────────────────────────────────────────
+void App::forceSave() {
+    fileRepository_.save();
+}
+
 // ── 생산 완료 + 자동 출고 동기화 ─────────────────────────────
 int App::doSync() {
     int produced = orderManager_.syncProduction();
     int released = orderManager_.processAllRelease(productManager_);
     if (produced + released > 0) fileRepository_.save();
     return produced + released;
+}
+
+// ── 강제 종료(Ctrl+C / 창 닫기) 시 저장 ─────────────────────
+namespace {
+    App* g_appPtr = nullptr;
+
+    BOOL WINAPI consoleCtrlHandler(DWORD sig) {
+        if (g_appPtr && (sig == CTRL_C_EVENT || sig == CTRL_CLOSE_EVENT
+                      || sig == CTRL_BREAK_EVENT || sig == CTRL_LOGOFF_EVENT
+                      || sig == CTRL_SHUTDOWN_EVENT)) {
+            g_appPtr->forceSave();
+        }
+        return FALSE; // 기본 처리 계속
+    }
 }
 
 // ── 생성자 ────────────────────────────────────────────────
@@ -56,6 +75,9 @@ App::App()
       monitor_(productManager_, orderManager_),
       fileRepository_(productManager_, orderManager_, productionLine_)
 {
+    g_appPtr = this;
+    SetConsoleCtrlHandler(consoleCtrlHandler, TRUE);
+
     fileRepository_.load();
     int produced = orderManager_.syncProduction();
     int released = orderManager_.processAllRelease(productManager_);
@@ -187,6 +209,7 @@ void App::runProductMenu() {
             productManager_.addProduct(name,
                                        stock < 0 ? 0 : stock,
                                        ptime, yield);
+            fileRepository_.save();
             cout << CG << "등록 완료." << CR << "\n";
         } else if (c == 2) {
             productManager_.listProducts(true);
@@ -245,10 +268,12 @@ void App::runProductMenu() {
                     "  수율(%) [" + to_string(target->getYieldRate()) + "]: ",
                     target->getYieldRate());
 
-                if (productManager_.updateProduct(id, name, stock, ptime, yield))
+                if (productManager_.updateProduct(id, name, stock, ptime, yield)) {
+                    fileRepository_.save();
                     cout << CG << "  수정 완료." << CR << "\n";
-                else
+                } else {
                     cout << CRD << "  수정 실패." << CR << "\n";
+                }
             }
         } else if (c == 5) {
             productManager_.listProducts(true);
@@ -301,6 +326,7 @@ void App::runProductMenu() {
                         string(CRD) + "  정말 삭제하시겠습니까? (y/N): " + CR);
                     if (confirm == "y" || confirm == "Y") {
                         productManager_.deleteProduct(id);
+                        fileRepository_.save();
                         cout << CG << "  삭제 완료." << CR << "\n";
                     } else {
                         cout << CGR << "  취소되었습니다." << CR << "\n";
@@ -332,15 +358,21 @@ void App::runOrderMenu() {
             int pid      = readInt("시료 ID: ");
             string cname = readLine("고객명: ");
             int qty      = readInt("주문 수량: ");
-            cout << (orderManager_.reserveOrder(cname, pid, qty)
-                     ? string(CG) + "예약 완료." + CR
-                     : string(CRD) + "예약 실패 (시료 ID 확인 또는 수량 > 0)." + CR) << "\n";
+            if (orderManager_.reserveOrder(cname, pid, qty)) {
+                fileRepository_.save();
+                cout << CG << "예약 완료." << CR << "\n";
+            } else {
+                cout << CRD << "예약 실패 (시료 ID 확인 또는 수량 > 0)." << CR << "\n";
+            }
         } else if (c == 2) {
             orderManager_.listOrdersByStatus(OrderStatus::RESERVED);
             int id = readInt("접수할 주문 ID: ");
-            cout << (orderManager_.acceptOrder(id)
-                     ? string(CG) + "접수 완료." + CR
-                     : string(CRD) + "접수 실패." + CR) << "\n";
+            if (orderManager_.acceptOrder(id)) {
+                fileRepository_.save();
+                cout << CG << "접수 완료." << CR << "\n";
+            } else {
+                cout << CRD << "접수 실패." << CR << "\n";
+            }
         } else if (c == 3) {
             orderManager_.listOrdersByStatus(OrderStatus::PENDING);
             int id = readInt("승인할 주문 ID: ");
@@ -362,15 +394,21 @@ void App::runOrderMenu() {
         } else if (c == 4) {
             orderManager_.listOrdersByStatus(OrderStatus::PENDING);
             int id = readInt("거절할 주문 ID: ");
-            cout << (orderManager_.rejectOrder(id)
-                     ? string(CG) + "거절 완료." + CR
-                     : string(CRD) + "거절 실패." + CR) << "\n";
+            if (orderManager_.rejectOrder(id)) {
+                fileRepository_.save();
+                cout << CG << "거절 완료." << CR << "\n";
+            } else {
+                cout << CRD << "거절 실패." << CR << "\n";
+            }
         } else if (c == 5) {
             orderManager_.listOrders();
             int id = readInt("취소할 주문 ID: ");
-            cout << (orderManager_.cancelOrder(id)
-                     ? string(CG) + "취소 완료." + CR
-                     : string(CRD) + "취소 실패 (RESERVED/PENDING 단계에서만 가능)." + CR) << "\n";
+            if (orderManager_.cancelOrder(id)) {
+                fileRepository_.save();
+                cout << CG << "취소 완료." << CR << "\n";
+            } else {
+                cout << CRD << "취소 실패 (RESERVED/PENDING 단계에서만 가능)." << CR << "\n";
+            }
         } else if (c == 6) {
             orderManager_.listOrders();
         }

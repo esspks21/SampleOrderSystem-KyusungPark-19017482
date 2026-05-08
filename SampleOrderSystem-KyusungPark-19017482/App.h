@@ -11,6 +11,7 @@ class App {
 public:
     App();
     void run();
+    void forceSave(); // 강제 종료 핸들러에서 호출 (public 필요)
 
 private:
     ProductManager  productManager_;
@@ -30,7 +31,7 @@ private:
     void runProductionMenu();
     void runResetMenu();               // 비밀번호 인증 후 데이터 초기화
 
-    int doSync(); // syncProduction() + processAllRelease() + save
+    int  doSync();    // syncProduction() + processAllRelease() + save
 
     static string getCurrentTime();
     static int    readInt(const string& prompt);
