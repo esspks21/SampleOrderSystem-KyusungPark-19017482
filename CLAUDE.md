@@ -65,11 +65,15 @@ msbuild SampleOrderSystem-KyusungPark-19017482.slnx /p:Configuration=Debug /p:Pl
 기능 명세(PRD)를 충족하는 고품질 코드를 개발하기 위해 Agentic Engineering 방식을 도입한다.
 Claude가 코드를 작성·수정할 때 아래 5가지 주안점을 항상 준수한다.
 
-### 1. 문서 관리 (CLAUDE.md · PRD.md)
+### 1. 문서 관리 (CLAUDE.md · PRD.md · README.md)
 
 - `CLAUDE.md`는 프로젝트 규칙·에이전트·코딩 규칙의 단일 진실 공급원(Single Source of Truth)이다.
 - 기능 추가·변경 시 `docs/PRD.md`와 관련 문서를 먼저 확인하고, 문서와 구현이 일치하도록 유지한다.
 - 구현 도중 요구사항이 바뀌면 코드와 함께 PRD도 즉시 업데이트한다.
+- `.cpp` 또는 `.h` 파일을 생성하거나 수정할 때마다 **반드시** `README.md`를 최신 상태로 업데이트한다.
+  - 새 클래스·파일이 추가되면 "프로젝트 구조" 섹션을 갱신한다.
+  - 기능이 추가·변경되면 "주요 기능" 및 "주문 흐름" 섹션을 갱신한다.
+  - 빌드·실행 방법이 바뀌면 해당 섹션을 갱신한다.
 
 ### 2. Harness 도입
 
