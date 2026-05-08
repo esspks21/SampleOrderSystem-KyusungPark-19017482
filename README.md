@@ -118,6 +118,13 @@ SampleOrderSystem-KyusungPark-19017482/
 
 ---
 
+## 품질 보증
+
+코드 변경이 발생할 때마다 `RegressionTest/TCDataGenerator`가 10,000개의 시료와 5,000개의 주문 데이터를 자동 생성하고, 데이터 무결성·검색 정확성·정렬 정확성을 포함한 15개 항목의 회귀 테스트를 수행합니다.
+테스트 결과는 타임스탬프 형식의 리포트로 로컬에만 저장되며, GitHub에는 테스트 소스 코드(`TCDataGenerator.cpp`, `run_regression.bat`)만 관리됩니다.
+
+---
+
 ## 기술 스택
 
 - **언어**: C++20

@@ -13,3 +13,11 @@ x64/
 Win32/
 Debug/
 Release/
+
+# RegressionTest — generated data and results are local only
+RegressionTest/data/
+RegressionTest/results/
+RegressionTest/TCDataGenerator.exe
+RegressionTest/*.obj
+RegressionTest/*.pdb
+RegressionTest/compile_log.txt

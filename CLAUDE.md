@@ -138,6 +138,15 @@ Claude가 코드를 작성·수정할 때 아래 5가지 주안점을 항상 준
 - 심각도(CRITICAL / HIGH / MEDIUM / LOW)를 함께 보고하며, 문제 발견 시 즉시 수정한다.
 - 동작(로직)은 변경하지 않고 보안성과 안전성만 개선한다.
 
+### regression-test
+
+`.cpp` 또는 `.h` 파일을 생성하거나 수정할 때마다 **반드시** `regression-test` 에이전트를 마지막에 실행한다.
+
+- `cpp-optimizer` → `clean-code-reviewer` → `cpp-security-guard` 완료 후 수행한다.
+- `RegressionTest/run_regression.bat`을 실행하여 TCDataGenerator로 10,000개 시료 데이터를 생성하고 15개 항목의 회귀 테스트를 수행한다.
+- 결과는 `RegressionTest/results/regression_<timestamp>.txt`에 저장된다. (git 미반영)
+- FAIL 항목이 발생하면 원인을 분석하고 즉시 코드를 수정한 뒤 재실행한다.
+
 ## Git 무시 항목
 
 - `.vs/` — Visual Studio 로컬 캐시
