@@ -171,12 +171,12 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 빌드 가능한 뼈대 + 핵심 데이터 모델 완성
 
-- [ ] 소스 디렉터리 및 파일 구조 생성
-- [ ] `OrderStatus` enum 구현
-- [ ] `Product` 클래스 구현 (멤버 변수, getter/setter)
-- [ ] `Order` 클래스 구현 (멤버 변수, getter/setter)
-- [ ] `main.cpp` 진입점 작성 (빌드 통과 확인)
-- [ ] 테스트 하네스 기본 틀 (`tests/` 디렉터리 생성)
+- [x] 소스 디렉터리 및 파일 구조 생성
+- [x] `OrderStatus` enum 구현
+- [x] `Product` 클래스 구현 (멤버 변수, getter/setter)
+- [x] `Order` 클래스 구현 (멤버 변수, getter/setter)
+- [x] `main.cpp` 진입점 작성 (빌드 통과 확인)
+- [x] 테스트 하네스 기본 틀 (`tests/` 디렉터리 생성)
 
 **리뷰 기준**: 빌드 성공 / Product·Order 객체 생성 및 출력 확인
 
@@ -186,9 +186,9 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 시료 등록·조회·검색 기능 완성
 
-- [ ] `ProductManager` 구현: 시료 등록, 전체 목록 조회, 이름 검색
-- [ ] 콘솔 UI: 시료 관리 서브메뉴 연결
-- [ ] 테스트 스크립트: 등록→조회→이름 검색 시나리오 PASS 확인
+- [x] `ProductManager` 구현: 시료 등록, 전체 목록 조회, 이름 검색
+- [x] 콘솔 UI: 시료 관리 서브메뉴 연결
+- [x] 테스트 스크립트: 등록→조회→이름 검색 시나리오 PASS 확인
 
 **리뷰 기준**: 시료 등록·목록·검색 기능이 PRD 명세와 일치
 
@@ -198,9 +198,9 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 주문 생명주기 전반부(RESERVED → PENDING → CANCELLED) 완성
 
-- [ ] `OrderManager` 구현: `reserveOrder`, `acceptOrder`, `cancelOrder`
-- [ ] 콘솔 UI: 주문 예약·접수·취소 서브메뉴 연결
-- [ ] 테스트 스크립트: 예약→접수 / 예약→취소 / 접수→취소 시나리오 PASS 확인
+- [x] `OrderManager` 구현: `reserveOrder`, `acceptOrder`, `cancelOrder`
+- [x] 콘솔 UI: 주문 예약·접수·취소 서브메뉴 연결
+- [x] 테스트 스크립트: 예약→접수 / 예약→취소 / 접수→취소 시나리오 PASS 확인
 
 **리뷰 기준**: 상태 전환이 PRD 흐름과 정확히 일치, 잘못된 상태에서 취소 시 오류 처리 확인
 
@@ -210,10 +210,10 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 생산담당자 승인·거절 처리 완성
 
-- [ ] `OrderManager` 구현: `approveOrder`(PENDING → CONFIRMED), `rejectOrder`(PENDING → REJECTED)
-- [ ] 승인 시 `ProductionLine` 대기 큐에 자동 추가
-- [ ] 콘솔 UI: 승인·거절 서브메뉴 연결
-- [ ] 테스트 스크립트: 승인→큐 추가 / 거절→목록 제외 시나리오 PASS 확인
+- [x] `OrderManager` 구현: `approveOrder`(PENDING → CONFIRMED), `rejectOrder`(PENDING → REJECTED)
+- [x] 승인 시 `ProductionLine` 대기 큐에 자동 추가
+- [x] 콘솔 UI: 승인·거절 서브메뉴 연결
+- [x] 테스트 스크립트: 승인→큐 추가 / 거절→목록 제외 시나리오 PASS 확인
 
 **리뷰 기준**: PENDING 이외 상태에서 승인·거절 시 거부 처리 확인
 
@@ -223,9 +223,9 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 순차 생산 처리 완성
 
-- [ ] `ProductionLine` 구현: 대기 큐, `startNext`(CONFIRMED → PRODUCING), `completeProducing`(PRODUCING → RELEASE)
-- [ ] 콘솔 UI: 생산 라인 현황 화면 (현재 생산 중 / 대기 큐 목록)
-- [ ] 테스트 스크립트: 큐 순서 보장 / 하나씩 처리 시나리오 PASS 확인
+- [x] `ProductionLine` 구현: 대기 큐, `startNext`(CONFIRMED → PRODUCING), `completeProducing`(PRODUCING → RELEASE)
+- [x] 콘솔 UI: 생산 라인 현황 화면 (현재 생산 중 / 대기 큐 목록)
+- [x] 테스트 스크립트: 큐 순서 보장 / 하나씩 처리 시나리오 PASS 확인
 
 **리뷰 기준**: 생산 라인이 동시에 하나의 주문만 처리함을 확인
 
@@ -235,10 +235,10 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 출고 실행 및 재고 차감 완성
 
-- [ ] 출고 실행: `CONFIRMED` 상태 주문 선택 → `RELEASE` 전환
-- [ ] 출고 시 시료 재고 차감 (`ProductManager.updateStock`)
-- [ ] 콘솔 UI: 출고 처리 서브메뉴 연결
-- [ ] 테스트 스크립트: 출고 후 재고 감소 / 재고 부족 시 출고 거부 시나리오 PASS 확인
+- [x] 출고 실행: `CONFIRMED` 상태 주문 선택 → `RELEASE` 전환
+- [x] 출고 시 시료 재고 차감 (`ProductManager.updateStock`)
+- [x] 콘솔 UI: 출고 처리 서브메뉴 연결
+- [x] 테스트 스크립트: 출고 후 재고 감소 / 재고 부족 시 출고 거부 시나리오 PASS 확인
 
 **리뷰 기준**: 재고 충분 여부 검증 후 출고 처리, 상태 전환 정확성 확인
 
@@ -248,10 +248,10 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 주문 현황 및 재고 상태 대시보드 완성
 
-- [ ] 상태별 주문 수 집계 출력 (RESERVED / CONFIRMED / PRODUCING / RELEASE, REJECTED 제외)
-- [ ] 시료별 재고 현황 출력: 여유 / 부족 / 고갈 상태 표기
-- [ ] 콘솔 UI: 모니터링 서브메뉴 연결
-- [ ] 테스트 스크립트: 집계 수치 정확성 검증 시나리오 PASS 확인
+- [x] 상태별 주문 수 집계 출력 (RESERVED / CONFIRMED / PRODUCING / RELEASE, REJECTED 제외)
+- [x] 시료별 재고 현황 출력: 여유 / 부족 / 고갈 상태 표기
+- [x] 콘솔 UI: 모니터링 서브메뉴 연결
+- [x] 테스트 스크립트: 집계 수치 정확성 검증 시나리오 PASS 확인
 
 **리뷰 기준**: PRD 모니터링 명세의 모든 항목이 화면에 출력됨을 확인
 
@@ -261,9 +261,9 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 프로그램 재시작 후에도 데이터 유지
 
-- [ ] `FileRepository` 구현: 시료·주문·생산 큐 데이터를 파일(CSV 또는 텍스트)로 저장·로드
-- [ ] 프로그램 시작 시 자동 로드, 종료 시 자동 저장
-- [ ] 테스트 스크립트: 저장→재실행→데이터 일치 확인 시나리오 PASS
+- [x] `FileRepository` 구현: 시료·주문·생산 큐 데이터를 파일(CSV 또는 텍스트)로 저장·로드
+- [x] 프로그램 시작 시 자동 로드, 종료 시 자동 저장
+- [x] 테스트 스크립트: 저장→재실행→데이터 일치 확인 시나리오 PASS
 
 **리뷰 기준**: 종료 후 재실행해도 이전 상태가 완전히 복원됨을 확인
 
@@ -273,10 +273,10 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 전체 메뉴 통합 및 메인 화면 완성
 
-- [ ] `App` 클래스: 메인 루프, 전체 서브메뉴 연결
-- [ ] 메인 화면 상단 요약 정보 (등록 시료 수 / 상태별 주문 수)
-- [ ] 잘못된 입력(범위 외 번호, 비숫자 입력) 처리
-- [ ] 통합 테스트: 예약→접수→승인→생산→출고 전체 흐름 E2E 시나리오 PASS
+- [x] `App` 클래스: 메인 루프, 전체 서브메뉴 연결
+- [x] 메인 화면 상단 요약 정보 (등록 시료 수 / 상태별 주문 수)
+- [x] 잘못된 입력(범위 외 번호, 비숫자 입력) 처리
+- [x] 통합 테스트: 예약→접수→승인→생산→출고 전체 흐름 E2E 시나리오 PASS
 
 **리뷰 기준**: PRD 메인 메뉴 구조와 일치, 모든 메뉴 진입·복귀 정상 동작 확인
 
@@ -286,11 +286,11 @@ SampleOrderSystem-KyusungPark-19017482/
 
 **목표**: 코드 품질 최종 점검 및 제출 준비
 
-- [ ] `cpp-optimizer` 에이전트 전체 소스 리뷰 및 개선 적용
-- [ ] `clean-code-reviewer` 에이전트 전체 소스 리뷰 및 개선 적용
-- [ ] `cpp-security-guard` 에이전트 전체 소스 리뷰 및 개선 적용
-- [ ] 엣지 케이스 최종 확인 (재고 0, 빈 큐, 잘못된 ID 입력 등)
-- [ ] 커밋 이력 정리 및 문서(CLAUDE.md·PRD) 최종 업데이트
+- [x] `cpp-optimizer` 에이전트 전체 소스 리뷰 및 개선 적용
+- [x] `clean-code-reviewer` 에이전트 전체 소스 리뷰 및 개선 적용
+- [x] `cpp-security-guard` 에이전트 전체 소스 리뷰 및 개선 적용
+- [x] 엣지 케이스 최종 확인 (재고 0, 빈 큐, 잘못된 ID 입력 등)
+- [x] 커밋 이력 정리 및 문서(CLAUDE.md·PRD) 최종 업데이트
 
 **리뷰 기준**: 모든 에이전트 리뷰 이슈 해결 완료, 빌드 경고 0건
 
