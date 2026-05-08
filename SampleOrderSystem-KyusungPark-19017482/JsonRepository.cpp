@@ -141,7 +141,7 @@ void JsonRepository::saveProducts() const {
         f << "{\"id\":" << p.getId()
           << ",\"name\":\"" << jEsc(p.getName()) << "\""
           << ",\"stock\":" << p.getStock()
-          << ",\"productionTime\":" << p.getProductionTime()
+          << ",\"productionTime\":" << p.getAvgProductionTime()
           << ",\"yieldRate\":" << p.getYieldRate() << "}";
         if (i + 1 < items.size()) f << ",";
         f << "\n";
@@ -198,19 +198,22 @@ void JsonRepository::loadProducts() {
     if (nextId > 0) pm_.setNextId(static_cast<int>(nextId));
 
     for (const auto& obj : jObjects(json, "items")) {
-        int    id             = static_cast<int>(jInt(obj, "id"));
-        string name           = jStr(obj, "name");
-        int    stock          = static_cast<int>(jInt(obj, "stock"));
-        int    productionTime = static_cast<int>(jInt(obj, "productionTime"));
-        // yieldRate는 소수점 포함이므로 별도 파싱
-        double yieldRate      = 0.0;
-        const string yrKey    = "\"yieldRate\":";
-        auto yrPos = obj.find(yrKey);
-        if (yrPos != string::npos) {
-            try { yieldRate = stod(obj.substr(yrPos + yrKey.size())); }
-            catch (...) {}
-        }
-        if (id > 0) pm_.restoreProduct(id, name, stock, productionTime, yieldRate);
+        int    id    = static_cast<int>(jInt(obj, "id"));
+        string name  = jStr(obj, "name");
+        int    stock = static_cast<int>(jInt(obj, "stock"));
+
+        auto parseDouble = [&](const string& key) -> double {
+            const string k = "\"" + key + "\":";
+            auto pos = obj.find(k);
+            if (pos == string::npos) return 0.0;
+            try { return stod(obj.substr(pos + k.size())); }
+            catch (...) { return 0.0; }
+        };
+
+        double avgProdTime = parseDouble("avgProductionTime");
+        double yieldRate   = parseDouble("yieldRate");
+
+        if (id > 0) pm_.restoreProduct(id, name, stock, avgProdTime, yieldRate);
     }
 }
 

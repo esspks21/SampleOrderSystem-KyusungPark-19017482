@@ -14,8 +14,8 @@ namespace {
 }
 
 void ProductManager::addProduct(const string& name, int stock,
-                                int productionTime, double yieldRate) {
-    products_.emplace_back(nextId_++, name, stock, productionTime, yieldRate);
+                                double avgProductionTime, double yieldRate) {
+    products_.emplace_back(nextId_++, name, stock, avgProductionTime, yieldRate);
 }
 
 void ProductManager::listProducts(bool ascending) const {
@@ -70,8 +70,8 @@ const Product* ProductManager::findById(int id) const {
 const vector<Product>& ProductManager::getAll() const { return products_; }
 
 void ProductManager::restoreProduct(int id, const string& name, int stock,
-                                    int productionTime, double yieldRate) {
-    products_.emplace_back(id, name, stock, productionTime, yieldRate);
+                                    double avgProductionTime, double yieldRate) {
+    products_.emplace_back(id, name, stock, avgProductionTime, yieldRate);
 }
 
 void ProductManager::setNextId(int id) { nextId_ = id; }

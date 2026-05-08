@@ -7,7 +7,7 @@ using namespace std;
 class ProductManager {
 public:
     void addProduct(const string& name, int stock,
-                    int productionTime = 0, double yieldRate = 0.0);
+                    double avgProductionTime = 0.0, double yieldRate = 0.0);
     void listProducts(bool ascending = true) const;
     vector<Product> search(const string& keyword, bool ascending = true) const;
     bool updateStock(int id, int delta);
@@ -16,7 +16,7 @@ public:
     const vector<Product>& getAll() const;
 
     void restoreProduct(int id, const string& name, int stock,
-                        int productionTime = 0, double yieldRate = 0.0);
+                        double avgProductionTime = 0.0, double yieldRate = 0.0);
     void setNextId(int id);
     int  getNextId() const;
     void clearAll();

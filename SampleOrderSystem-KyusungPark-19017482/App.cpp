@@ -162,20 +162,25 @@ void App::runProductMenu() {
         if (c == 1) {
             string name  = readLine("시료명: ");
             int    stock = readInt("초기 재고: ");
-            int    ptime = readInt("생산시간 (분): ");
-            // 수율: 소수점 입력 허용
-            cout << "수율 (%, 예: 95.5): ";
-            double yield = 0.0;
-            string yline;
-            if (getline(cin, yline) && !yline.empty()) {
-                try { yield = stod(yline); } catch (...) {}
-            }
-            if (yield < 0.0) yield = 0.0;
-            if (yield > 100.0) yield = 100.0;
+
+            auto readDouble = [](const string& prompt, double minVal, double maxVal) -> double {
+                cout << prompt;
+                string line;
+                if (!getline(cin, line) || line.empty()) return 0.0;
+                double val = 0.0;
+                try { val = stod(line); } catch (...) {}
+                if (val < minVal) val = minVal;
+                if (val > maxVal) val = maxVal;
+                // 소수점 1자리로 반올림
+                return static_cast<int>(val * 10 + 0.5) / 10.0;
+            };
+
+            double ptime = readDouble("평균 생산시간 (분, 예: 12.5): ", 0.0, 99999.9);
+            double yield = readDouble("수율 (%, 예: 95.5): ",           0.0,   100.0);
+
             productManager_.addProduct(name,
                                        stock < 0 ? 0 : stock,
-                                       ptime < 0 ? 0 : ptime,
-                                       yield);
+                                       ptime, yield);
             cout << CG << "등록 완료." << CR << "\n";
         } else if (c == 2) {
             productManager_.listProducts(true);
